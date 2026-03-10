@@ -1,0 +1,32 @@
+entrypoint = "main.py"
+
+run = "streamlit run main.py --server.port $PORT --server.address 0.0.0.0"
+
+modules = ["python-3.10"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["arrow-cpp", "ffmpeg", "glibcLocales", "pkg-config", "python310Full", "python310Packages.streamlit", "streamlit"]
+
+[deployment]
+run = [
+  "streamlit",
+  "run",
+  "main.py",
+  "--server.port",
+  "$PORT",
+  "--server.address",
+  "0.0.0.0",
+]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8501
+externalPort = 80
+
+[[ports]]
+localPort = 8502
+externalPort = 3000
+
+[agent]
+expertMode = true
