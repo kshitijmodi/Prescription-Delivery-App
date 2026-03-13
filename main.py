@@ -14,19 +14,16 @@ import os
 # =====================================================
 
 USERS = {
-    # Provider
     "provider": {
         "password": "rx2024",
         "role": "provider",
         "name": "Dr. James Wilson"
     },
-    # Patients
     "john_doe":     {"password": "pass123", "role": "patient", "name": "John Doe"},
     "sarah_smith":  {"password": "pass123", "role": "patient", "name": "Sarah Smith"},
     "michael_chen": {"password": "pass123", "role": "patient", "name": "Michael Chen"},
     "emily_davis":  {"password": "pass123", "role": "patient", "name": "Emily Davis"},
     "robert_jones": {"password": "pass123", "role": "patient", "name": "Robert Jones"},
-    # Pharmacies
     "pharmacy1": {
         "password": "pharma1",
         "role": "pharmacy",
@@ -39,11 +36,9 @@ USERS = {
         "name": "QuickRx Pharmacy – Midtown",
         "pharmacy_id": 2
     },
-    # Drivers
     "mike_j":   {"password": "drive1", "role": "driver", "name": "Mike Johnson",  "driver_id": "DR001"},
     "linda_c":  {"password": "drive1", "role": "driver", "name": "Linda Chen",    "driver_id": "DR002"},
     "david_k":  {"password": "drive1", "role": "driver", "name": "David Kim",     "driver_id": "DR003"},
-    # Admin
     "admin": {"password": "admin1", "role": "admin", "name": "System Admin"},
 }
 
@@ -258,7 +253,6 @@ def init_session_state():
         st.session_state.groq_api_key = os.environ.get('GROQ_API_KEY', '')
     if 'google_maps_api_key' not in st.session_state:
         st.session_state.google_maps_api_key = os.environ.get('GOOGLE_MAPS_API_KEY', '')
-    # Login state
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
     if 'username' not in st.session_state:
@@ -267,7 +261,6 @@ def init_session_state():
         st.session_state.user_role = None
     if 'user_display_name' not in st.session_state:
         st.session_state.user_display_name = None
-    # Pharmacy name → account mapping (first distinct name = 1, second = 2)
     if 'pharmacy_name_to_account' not in st.session_state:
         st.session_state.pharmacy_name_to_account = {}
 
@@ -288,7 +281,6 @@ def update_prescription_status(rx_id, new_status, **kwargs):
 
 
 def get_pharmacy_account(pharmacy_name):
-    """Map a real pharmacy name to account 1 or 2 for the demo."""
     mapping = st.session_state.pharmacy_name_to_account
     if pharmacy_name not in mapping:
         if len(mapping) == 0:
@@ -296,32 +288,423 @@ def get_pharmacy_account(pharmacy_name):
         elif len(mapping) == 1:
             mapping[pharmacy_name] = 2
         else:
-            # Any additional pharmacies go to account 2
             mapping[pharmacy_name] = 2
     return mapping[pharmacy_name]
 
 
+# =====================================================
+# DESIGN SYSTEM
+# =====================================================
+
+ROLE_COLORS = {
+    "provider": {"primary": "#6366F1", "light": "#EEF2FF", "gradient": "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)"},
+    "patient":  {"primary": "#0EA5E9", "light": "#F0F9FF", "gradient": "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)"},
+    "pharmacy": {"primary": "#10B981", "light": "#ECFDF5", "gradient": "linear-gradient(135deg, #10B981 0%, #34D399 100%)"},
+    "driver":   {"primary": "#F59E0B", "light": "#FFFBEB", "gradient": "linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)"},
+    "admin":    {"primary": "#EF4444", "light": "#FEF2F2", "gradient": "linear-gradient(135deg, #EF4444 0%, #F87171 100%)"},
+}
+
 def apply_custom_css():
     st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-    .stButton > button {
-        width: 100%;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: all 0.2s;
+
+    /* ── Global ── */
+    html, body, [class*="css"] {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
-    .stButton > button:hover { background-color: #1d4ed8; color: white; }
-    .success-msg { background: #d1fae5; padding: 12px 16px; border-radius: 8px;
-                   border-left: 4px solid #10b981; color: #065f46; margin: 8px 0; }
-    .warning-msg { background: #fef3c7; padding: 12px 16px; border-radius: 8px;
-                   border-left: 4px solid #f59e0b; color: #92400e; margin: 8px 0; }
-    .info-msg    { background: #dbeafe; padding: 12px 16px; border-radius: 8px;
-                   border-left: 4px solid #3b82f6; color: #1e40af; margin: 8px 0; }
-    .login-container { max-width: 420px; margin: 60px auto; padding: 40px;
-                       background: white; border-radius: 16px;
-                       box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .main .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+    }
+
+    /* ── Sidebar ── */
+    [data-testid="stSidebar"] {
+        background: #0F172A !important;
+        border-right: 1px solid #1E293B;
+    }
+    [data-testid="stSidebar"] * {
+        color: #CBD5E1 !important;
+    }
+    [data-testid="stSidebar"] .stMarkdown h1,
+    [data-testid="stSidebar"] .stMarkdown h2,
+    [data-testid="stSidebar"] .stMarkdown h3,
+    [data-testid="stSidebar"] .stMarkdown strong {
+        color: #F1F5F9 !important;
+    }
+    [data-testid="stSidebar"] hr {
+        border-color: #1E293B !important;
+    }
+    [data-testid="stSidebar"] .stButton > button {
+        background: #1E293B !important;
+        color: #F1F5F9 !important;
+        border: 1px solid #334155 !important;
+        border-radius: 10px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+        width: 100% !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background: #EF4444 !important;
+        border-color: #EF4444 !important;
+        color: white !important;
+        transform: translateY(-1px);
+    }
+
+    /* ── Buttons ── */
+    .stButton > button {
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        padding: 0.5rem 1.25rem !important;
+        transition: all 0.2s ease !important;
+        border: none !important;
+        background: linear-gradient(135deg, #0EA5E9, #6366F1) !important;
+        color: white !important;
+        box-shadow: 0 2px 8px rgba(14,165,233,0.25) !important;
+        width: 100%;
+    }
+    .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(14,165,233,0.4) !important;
+        opacity: 0.95 !important;
+    }
+    .stButton > button:active {
+        transform: translateY(0px) !important;
+    }
+
+    /* ── Form submit buttons ── */
+    .stFormSubmitButton > button {
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #10B981, #0EA5E9) !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.6rem 1.5rem !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 10px rgba(16,185,129,0.3) !important;
+        width: 100% !important;
+    }
+    .stFormSubmitButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(16,185,129,0.45) !important;
+    }
+
+    /* ── Inputs ── */
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div {
+        border-radius: 10px !important;
+        border: 1.5px solid #E2E8F0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.9rem !important;
+        transition: border-color 0.2s ease !important;
+        background: #FAFAFA !important;
+    }
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus {
+        border-color: #0EA5E9 !important;
+        box-shadow: 0 0 0 3px rgba(14,165,233,0.12) !important;
+    }
+
+    /* ── Metrics ── */
+    [data-testid="stMetric"] {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        transition: box-shadow 0.2s ease;
+    }
+    [data-testid="stMetric"]:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    [data-testid="stMetricLabel"] {
+        font-size: 0.78rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        color: #64748B !important;
+    }
+    [data-testid="stMetricValue"] {
+        font-size: 1.75rem !important;
+        font-weight: 700 !important;
+        color: #0F172A !important;
+    }
+
+    /* ── Tabs ── */
+    .stTabs [data-baseweb="tab-list"] {
+        background: #F1F5F9;
+        border-radius: 12px;
+        padding: 4px;
+        gap: 2px;
+        border: none !important;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 9px !important;
+        font-weight: 500 !important;
+        font-size: 0.875rem !important;
+        color: #64748B !important;
+        padding: 0.5rem 1rem !important;
+        transition: all 0.2s ease !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background: white !important;
+        color: #0F172A !important;
+        font-weight: 600 !important;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.1) !important;
+    }
+
+    /* ── Expanders ── */
+    [data-testid="stExpander"] {
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 12px !important;
+        margin-bottom: 0.5rem !important;
+        overflow: hidden !important;
+        background: white !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+        transition: box-shadow 0.2s ease !important;
+    }
+    [data-testid="stExpander"]:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    }
+    [data-testid="stExpander"] summary {
+        font-weight: 600 !important;
+        color: #1E293B !important;
+        padding: 0.75rem 1rem !important;
+    }
+
+    /* ── Progress bar ── */
+    .stProgress > div > div {
+        border-radius: 99px !important;
+        background: #E2E8F0 !important;
+    }
+    .stProgress > div > div > div {
+        border-radius: 99px !important;
+        background: linear-gradient(90deg, #0EA5E9, #6366F1) !important;
+        transition: width 0.5s ease !important;
+    }
+
+    /* ── Alerts ── */
+    [data-testid="stAlert"] {
+        border-radius: 12px !important;
+        border: none !important;
+        font-weight: 500 !important;
+    }
+
+    /* ── Divider ── */
+    hr {
+        border: none !important;
+        border-top: 1px solid #E2E8F0 !important;
+        margin: 1.25rem 0 !important;
+    }
+
+    /* ── Page header cards ── */
+    .page-header {
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1.5rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .page-header h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: white !important;
+    }
+    .page-header p {
+        margin: 0;
+        opacity: 0.85;
+        font-size: 0.9rem;
+    }
+
+    /* ── Stat badge ── */
+    .stat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 99px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    /* ── Rx card ── */
+    .rx-card {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        transition: box-shadow 0.2s ease;
+    }
+    .rx-card:hover {
+        box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    }
+
+    /* ── Status pill ── */
+    .status-pill {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 99px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    .status-pending        { background: #FEF3C7; color: #92400E; }
+    .status-assigned       { background: #FED7AA; color: #9A3412; }
+    .status-filling        { background: #DBEAFE; color: #1E40AF; }
+    .status-ready          { background: #D1FAE5; color: #065F46; }
+    .status-out_for_delivery { background: #E0E7FF; color: #3730A3; }
+    .status-delivered      { background: #DCFCE7; color: #14532D; }
+
+    /* ── Milestone step ── */
+    .milestone-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    .milestone-done   { background: #D1FAE5; color: #065F46; }
+    .milestone-pending { background: #F1F5F9; color: #94A3B8; }
+
+    /* ── Activity feed ── */
+    .activity-entry {
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: #F8FAFC;
+        border-left: 3px solid #0EA5E9;
+        margin-bottom: 6px;
+        font-size: 0.8rem;
+        font-family: 'Inter', monospace;
+        color: #334155;
+    }
+
+    /* ── Login page ── */
+    .login-hero {
+        text-align: center;
+        padding: 3rem 0 2rem 0;
+    }
+    .login-logo {
+        font-size: 3.5rem;
+        margin-bottom: 0.5rem;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.06); }
+    }
+    .login-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #0EA5E9, #6366F1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+    }
+    .login-subtitle {
+        color: #64748B;
+        font-size: 1rem;
+        margin-top: 0.4rem;
+    }
+    .login-card {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 20px;
+        padding: 2rem 2rem 1.5rem;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+
+    /* ── Pharmacy rec card ── */
+    .rec-card {
+        background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
+        border: 1.5px solid #6EE7B7;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        margin: 0.75rem 0;
+    }
+    .rec-card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #065F46;
+        margin-bottom: 2px;
+    }
+    .rec-card-address {
+        font-size: 0.85rem;
+        color: #047857;
+    }
+
+    /* ── AI reasoning list ── */
+    .reasoning-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 6px 0;
+        font-size: 0.875rem;
+        color: #334155;
+        border-bottom: 1px solid #F1F5F9;
+    }
+    .reasoning-item:last-child { border-bottom: none; }
+
+    /* ── Driver card ── */
+    .driver-rec-card {
+        background: linear-gradient(135deg, #EFF6FF, #EDE9FE);
+        border: 1.5px solid #93C5FD;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        margin: 0.75rem 0;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* ── Spinner ── */
+    [data-testid="stSpinner"] > div {
+        border-top-color: #0EA5E9 !important;
+    }
+
     </style>
     """, unsafe_allow_html=True)
+
+
+def page_header(icon, title, subtitle, role="patient"):
+    colors = ROLE_COLORS.get(role, ROLE_COLORS["patient"])
+    st.markdown(f"""
+    <div class="page-header" style="background: {colors['gradient']};">
+        <div style="font-size:2rem;">{icon}</div>
+        <div>
+            <h1>{title}</h1>
+            <p>{subtitle}</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def status_pill(status):
+    labels = {
+        'pending': '⏳ Pending',
+        'assigned': '📋 Assigned',
+        'filling': '⚗️ Filling',
+        'ready': '✅ Ready',
+        'out_for_delivery': '🚚 Out for Delivery',
+        'delivered': '🏁 Delivered',
+    }
+    label = labels.get(status, status)
+    return f'<span class="status-pill status-{status}">{label}</span>'
 
 
 # =====================================================
@@ -330,18 +713,22 @@ def apply_custom_css():
 
 def login_page():
     st.markdown("""
-    <div style='text-align:center; padding: 40px 0 20px 0;'>
-        <h1 style='font-size:2.2rem; color:#2563eb;'>💊 Prescription Delivery</h1>
-        <p style='color:#6b7280; font-size:1rem;'>Sign in to your account</p>
+    <div class="login-hero">
+        <div class="login-logo">💊</div>
+        <h1 class="login-title">RxDeliver</h1>
+        <p class="login-subtitle">Intelligent Prescription Delivery Platform</p>
     </div>
     """, unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([1, 1.2, 1])
+    col1, col2, col3 = st.columns([1, 1.1, 1])
     with col2:
+        st.markdown('<div class="login-card">', unsafe_allow_html=True)
         with st.form("login_form"):
-            username = st.text_input("Username", placeholder="Enter username")
-            password = st.text_input("Password", type="password", placeholder="Enter password")
-            submitted = st.form_submit_button("Sign In", use_container_width=True)
+            st.markdown("#### Sign in to your account")
+            username = st.text_input("Username", placeholder="Enter your username")
+            password = st.text_input("Password", type="password", placeholder="Enter your password")
+            submitted = st.form_submit_button("Sign In →", use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
         if submitted:
             user = USERS.get(username)
@@ -354,25 +741,23 @@ def login_page():
             else:
                 st.error("Invalid username or password.")
 
-        st.markdown("---")
-        st.markdown("**Demo Credentials**")
-
-        with st.expander("View all logins"):
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.expander("🔑 View Demo Credentials"):
             st.markdown("""
 | Role | Username | Password |
 |------|----------|----------|
-| Provider | `provider` | `rx2024` |
-| Patient – John Doe | `john_doe` | `pass123` |
-| Patient – Sarah Smith | `sarah_smith` | `pass123` |
-| Patient – Michael Chen | `michael_chen` | `pass123` |
-| Patient – Emily Davis | `emily_davis` | `pass123` |
-| Patient – Robert Jones | `robert_jones` | `pass123` |
-| Pharmacy 1 | `pharmacy1` | `pharma1` |
-| Pharmacy 2 | `pharmacy2` | `pharma2` |
-| Driver – Mike Johnson | `mike_j` | `drive1` |
-| Driver – Linda Chen | `linda_c` | `drive1` |
-| Driver – David Kim | `david_k` | `drive1` |
-| Admin | `admin` | `admin1` |
+| 👨‍⚕️ Provider | `provider` | `rx2024` |
+| 👤 Patient – John Doe | `john_doe` | `pass123` |
+| 👤 Patient – Sarah Smith | `sarah_smith` | `pass123` |
+| 👤 Patient – Michael Chen | `michael_chen` | `pass123` |
+| 👤 Patient – Emily Davis | `emily_davis` | `pass123` |
+| 👤 Patient – Robert Jones | `robert_jones` | `pass123` |
+| 🏪 Pharmacy 1 | `pharmacy1` | `pharma1` |
+| 🏪 Pharmacy 2 | `pharmacy2` | `pharma2` |
+| 🚗 Driver – Mike Johnson | `mike_j` | `drive1` |
+| 🚗 Driver – Linda Chen | `linda_c` | `drive1` |
+| 🚗 Driver – David Kim | `david_k` | `drive1` |
+| 📊 Admin | `admin` | `admin1` |
 """)
 
 
@@ -381,11 +766,10 @@ def login_page():
 # =====================================================
 
 def page_provider():
-    st.title("👨‍⚕️ Provider Portal")
-    st.caption(f"Logged in as {st.session_state.user_display_name}")
+    page_header("👨‍⚕️", "Provider Portal", f"Welcome, {st.session_state.user_display_name}", "provider")
 
     with st.form("rx_form"):
-        st.subheader("Create E-Prescription")
+        st.markdown("#### ✍️ Create New E-Prescription")
         col1, col2, col3 = st.columns(3)
         with col1:
             patient_name = st.selectbox("Patient", PATIENT_NAMES)
@@ -402,7 +786,7 @@ def page_provider():
             ])
             st.text_input("Patient Address", value="Set by patient", disabled=True)
 
-        submitted = st.form_submit_button("Send Prescription", use_container_width=True)
+        submitted = st.form_submit_button("📤 Send Prescription", use_container_width=True)
 
     if submitted:
         rx_id = f"RX{len(st.session_state.prescriptions) + 1:03d}"
@@ -434,29 +818,29 @@ def page_provider():
             }
         })
         add_activity(f"Provider created {rx_id} for {patient_name} – {medication}")
-        st.success(f"✅ Prescription {rx_id} sent to {patient_name}")
+        st.success(f"✅ Prescription **{rx_id}** sent to **{patient_name}**")
 
-    # Stats
     st.markdown("---")
     total = len(st.session_state.prescriptions)
     pending = sum(1 for r in st.session_state.prescriptions if r['status'] == 'pending')
     delivered = sum(1 for r in st.session_state.prescriptions if r['status'] == 'delivered')
     c1, c2, c3 = st.columns(3)
-    c1.metric("Total Prescriptions", total)
-    c2.metric("Pending", pending)
-    c3.metric("Delivered Today", delivered)
+    c1.metric("📋 Total Prescriptions", total)
+    c2.metric("⏳ Pending", pending)
+    c3.metric("✅ Delivered Today", delivered)
 
-    # Recent prescriptions
-    st.subheader("All Prescriptions")
+    st.markdown("#### 📄 All Prescriptions")
     if not st.session_state.prescriptions:
-        st.info("No prescriptions created yet.")
+        st.info("No prescriptions created yet. Use the form above to get started.")
     for rx in reversed(st.session_state.prescriptions[-10:]):
-        with st.expander(f"{rx['id']} – {rx['patient_name']} – {rx['medication']} [{rx['status'].upper()}]"):
+        with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+            st.markdown(status_pill(rx['status']), unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
             c1, c2, c3 = st.columns(3)
             c1.write(f"**Qty:** {rx['quantity']}")
             c2.write(f"**Refills:** {rx['refills']}")
             c3.write(f"**Insurance:** {rx['insurance']}")
-            st.caption(f"Created: {rx['created_at']}")
+            st.caption(f"🕐 Created: {rx['created_at']}")
 
 
 # =====================================================
@@ -465,27 +849,38 @@ def page_provider():
 
 def page_patient():
     patient_name = st.session_state.user_display_name
-    st.title(f"👤 Patient Portal")
-    st.caption(f"Logged in as {patient_name}")
+    page_header("👤", "My Prescriptions", f"Hello, {patient_name}", "patient")
 
     my_rxs = [r for r in st.session_state.prescriptions if r['patient_name'] == patient_name]
 
     if not my_rxs:
-        st.info("No prescriptions have been sent to you yet by your provider.")
+        st.markdown("""
+        <div style="text-align:center; padding: 3rem; background: #F8FAFC; border-radius: 16px; border: 2px dashed #CBD5E1;">
+            <div style="font-size:3rem;">💊</div>
+            <h3 style="color:#64748B; margin-top:0.5rem;">No prescriptions yet</h3>
+            <p style="color:#94A3B8;">Your provider hasn't sent you any prescriptions yet.</p>
+        </div>
+        """, unsafe_allow_html=True)
         return
 
     maps_key = st.session_state.google_maps_api_key
     groq_key = st.session_state.groq_api_key
 
     for rx in my_rxs:
-        st.markdown("---")
-        with st.container():
-            st.subheader(f"{rx['id']} – {rx['medication']}")
+        st.markdown(f"""
+        <div class="rx-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <span style="font-size:1.1rem; font-weight:700; color:#0F172A;">{rx['id']} &nbsp;·&nbsp; {rx['medication']}</span>
+                {status_pill(rx['status'])}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
+        with st.container():
             # ── ADDRESS SETUP ──────────────────────────────────────
             if rx['status'] == 'pending':
                 if not rx['location']:
-                    st.markdown("**Set your delivery address to continue:**")
+                    st.markdown("**📍 Set your delivery address to continue:**")
                     with st.form(f"addr_{rx['id']}"):
                         c1, c2 = st.columns(2)
                         street = c1.text_input("Street Address")
@@ -493,7 +888,7 @@ def page_patient():
                         c3, c4 = st.columns(2)
                         state  = c3.text_input("State")
                         zipcode = c4.text_input("ZIP Code")
-                        if st.form_submit_button("Save Address"):
+                        if st.form_submit_button("💾 Save Address"):
                             if all([street, city, state, zipcode]):
                                 full_address = f"{street}, {city}, {state} {zipcode}"
                                 rx['location'] = full_address
@@ -503,9 +898,12 @@ def page_patient():
                             else:
                                 st.error("All fields are required.")
                 else:
-                    # Show address + edit option
                     col_addr, col_edit = st.columns([3, 1])
-                    col_addr.markdown(f"📍 **Delivery Address:** {rx['location']}")
+                    col_addr.markdown(f"""
+                    <div style="background:#F0F9FF; border:1px solid #BAE6FD; border-radius:10px; padding:10px 14px; font-size:0.9rem; color:#0369A1;">
+                        📍 <strong>Delivery Address:</strong> {rx['location']}
+                    </div>
+                    """, unsafe_allow_html=True)
                     if col_edit.button("✏️ Edit", key=f"edit_addr_{rx['id']}"):
                         rx['_editing_address'] = True
                         st.rerun()
@@ -521,13 +919,13 @@ def page_patient():
                             state   = c3.text_input("State", value=rest[0] if rest else "")
                             zipcode = c4.text_input("ZIP",   value=rest[1] if len(rest) > 1 else "")
                             sc1, sc2 = st.columns(2)
-                            if sc1.form_submit_button("Update"):
+                            if sc1.form_submit_button("✅ Update"):
                                 if all([street, city, state, zipcode]):
                                     rx['location'] = f"{street}, {city}, {state} {zipcode}"
                                     rx.pop('_editing_address', None)
                                     rx.pop('pharmacy_recommendations', None)
                                     st.rerun()
-                            if sc2.form_submit_button("Cancel"):
+                            if sc2.form_submit_button("✖ Cancel"):
                                 rx.pop('_editing_address', None)
                                 st.rerun()
 
@@ -560,22 +958,26 @@ def page_patient():
                             rec_id = rec.get('recommended_id')
                             rec_ph = next((p for p in phs if p['id'] == rec_id), phs[0])
 
-                            st.markdown("#### 🏆 Recommended Pharmacy")
-                            st.markdown(f"**{rec_ph['name']}**  \n📍 {rec_ph['address']}")
-                            m1, m2, m3, m4 = st.columns(4)
-                            m1.metric("AI Score", f"{rec.get('score', 'N/A')}/100")
-                            m2.metric("Distance", f"{rec_ph['distance_miles']} mi")
-                            m3.metric("Drive Time", rec_ph['drive_time'])
-                            m4.metric("Rating", f"⭐ {rec_ph['rating']}")
+                            st.markdown(f"""
+                            <div class="rec-card">
+                                <div class="rec-card-title">🏆 {rec_ph['name']}</div>
+                                <div class="rec-card-address">📍 {rec_ph['address']}</div>
+                            </div>
+                            """, unsafe_allow_html=True)
 
-                            with st.expander("Why this pharmacy?"):
+                            m1, m2, m3, m4 = st.columns(4)
+                            m1.metric("🤖 AI Score", f"{rec.get('score', 'N/A')}/100")
+                            m2.metric("📏 Distance", f"{rec_ph['distance_miles']} mi")
+                            m3.metric("🚗 Drive Time", rec_ph['drive_time'])
+                            m4.metric("⭐ Rating", rec_ph['rating'])
+
+                            with st.expander("💡 Why this pharmacy?"):
                                 for r in rec.get('reasoning', []):
-                                    st.write(f"• {r}")
-                            with st.expander("View other options"):
+                                    st.markdown(f"""<div class="reasoning-item">✦ {r}</div>""", unsafe_allow_html=True)
+                            with st.expander("📋 View other options"):
                                 for opt in rec.get('ranked_options', []):
                                     st.write(f"**#{rec.get('ranked_options',[]).index(opt)+1} {opt.get('name','')}** — Score: {opt.get('score','N/A')} — {opt.get('summary','')}")
 
-                            # ── CONFIRM & SCHEDULE ─────────────────
                             st.markdown("#### 📅 Schedule Delivery")
                             with st.form(f"schedule_{rx['id']}"):
                                 delivery_time = st.selectbox("Delivery Window", [
@@ -583,7 +985,7 @@ def page_patient():
                                     "Tomorrow 10 AM–12 PM", "Tomorrow 2–4 PM"
                                 ])
                                 instructions = st.text_input("Special Instructions (optional)")
-                                if st.form_submit_button("✅ Confirm & Schedule"):
+                                if st.form_submit_button("✅ Confirm & Schedule Delivery"):
                                     account = get_pharmacy_account(rec_ph['name'])
                                     update_prescription_status(
                                         rx['id'], 'assigned',
@@ -601,42 +1003,65 @@ def page_patient():
             # ── IN-TRANSIT TRACKING ────────────────────────────────
             elif rx['status'] in ['assigned', 'filling', 'ready', 'out_for_delivery']:
                 status_map = {
-                    'assigned': ('🟠 Assigned to Pharmacy', 25),
-                    'filling':  ('🔵 Being Filled', 50),
-                    'ready':    ('🟢 Ready for Pickup', 75),
-                    'out_for_delivery': ('🚚 Out for Delivery', 90),
+                    'assigned':          ('🟠 Assigned to Pharmacy', 25),
+                    'filling':           ('🔵 Being Filled',          50),
+                    'ready':             ('🟢 Ready for Pickup',       75),
+                    'out_for_delivery':  ('🚚 Out for Delivery',       90),
                 }
                 label, progress = status_map[rx['status']]
                 st.markdown(f"**Status:** {label}")
                 st.progress(progress)
 
                 c1, c2 = st.columns(2)
-                c1.markdown(f"**Pharmacy:** {rx.get('pharmacy_name', '—')}")
-                c1.markdown(f"📍 {rx.get('pharmacy_address', '—')}")
-                c2.markdown(f"**Delivery Window:** {rx.get('delivery_time', '—')}")
+                c1.markdown(f"""
+                <div style="background:#F8FAFC; border-radius:10px; padding:12px; margin-top:8px;">
+                    <div style="font-size:0.75rem; color:#64748B; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Pharmacy</div>
+                    <div style="font-weight:600; color:#0F172A; margin-top:2px;">{rx.get('pharmacy_name','—')}</div>
+                    <div style="font-size:0.85rem; color:#64748B;">📍 {rx.get('pharmacy_address','—')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                c2.markdown(f"""
+                <div style="background:#F8FAFC; border-radius:10px; padding:12px; margin-top:8px;">
+                    <div style="font-size:0.75rem; color:#64748B; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Delivery Window</div>
+                    <div style="font-weight:600; color:#0F172A; margin-top:2px;">🕐 {rx.get('delivery_time','—')}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
                 if rx['status'] == 'out_for_delivery':
-                    st.markdown(f"🚗 **Driver:** {rx.get('driver_name', '—')}")
-                    st.markdown(f"⏱ **ETA:** {rx.get('estimated_delivery_time', 'Calculating...')}")
+                    st.markdown(f"""
+                    <div style="background:#EDE9FE; border:1px solid #C4B5FD; border-radius:10px; padding:12px; margin-top:8px;">
+                        🚗 <strong>Driver:</strong> {rx.get('driver_name','—')} &nbsp;·&nbsp; ⏱ <strong>ETA:</strong> {rx.get('estimated_delivery_time','Calculating...')}
+                    </div>
+                    """, unsafe_allow_html=True)
 
                 ms = rx.get('milestones', {})
-                st.markdown("**Delivery Milestones:**")
+                st.markdown("<br>**Delivery Milestones:**", unsafe_allow_html=True)
                 steps = [
-                    ("GPS Started",        ms.get('gps_started')),
-                    ("Photo Taken",        ms.get('photo_captured')),
-                    ("Signature Obtained", ms.get('signature_obtained')),
-                    ("Delivered",          ms.get('delivered')),
+                    ("📍 GPS Started",        ms.get('gps_started')),
+                    ("📸 Photo Taken",         ms.get('photo_captured')),
+                    ("✍️ Signature Obtained",  ms.get('signature_obtained')),
+                    ("🏁 Delivered",           ms.get('delivered')),
                 ]
                 for label_m, done in steps:
-                    icon = "✅" if done else "⬜"
-                    st.write(f"{icon} {label_m}")
+                    css = "milestone-done" if done else "milestone-pending"
+                    icon = "✅" if done else "○"
+                    st.markdown(f'<div class="milestone-step {css}">{icon} &nbsp; {label_m}</div>', unsafe_allow_html=True)
 
             # ── DELIVERED ─────────────────────────────────────────
             elif rx['status'] == 'delivered':
-                with st.expander(f"✅ Delivered – {rx.get('delivered_at', '')}"):
-                    st.write(f"**Pharmacy:** {rx.get('pharmacy_name', '—')}")
-                    st.write(f"**Driver:** {rx.get('driver_name', '—')}")
-                    st.write(f"**Refills Remaining:** {rx['refills']}")
+                st.markdown(f"""
+                <div style="background:#DCFCE7; border:1px solid #86EFAC; border-radius:12px; padding:1rem 1.25rem; margin-top:0.5rem;">
+                    <div style="font-weight:700; color:#14532D; font-size:1rem;">🎉 Delivered successfully</div>
+                    <div style="font-size:0.85rem; color:#166534; margin-top:4px;">
+                        🕐 {rx.get('delivered_at','')} &nbsp;·&nbsp;
+                        🏪 {rx.get('pharmacy_name','—')} &nbsp;·&nbsp;
+                        🚗 {rx.get('driver_name','—')} &nbsp;·&nbsp;
+                        🔄 {rx['refills']} refills remaining
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
 
 
 # =====================================================
@@ -648,10 +1073,8 @@ def page_pharmacy():
     pharmacy_account = user['pharmacy_id']
     pharmacy_label   = user['name']
 
-    st.title(f"🏪 {pharmacy_label}")
-    st.caption(f"Logged in as {st.session_state.user_display_name}")
+    page_header("🏪", pharmacy_label, f"Logged in as {st.session_state.user_display_name}", "pharmacy")
 
-    # Filter prescriptions belonging to this pharmacy account
     my_rxs = [r for r in st.session_state.prescriptions if r.get('pharmacy_account') == pharmacy_account]
 
     assigned = [r for r in my_rxs if r['status'] == 'assigned']
@@ -660,28 +1083,36 @@ def page_pharmacy():
     delivered_today = [r for r in my_rxs if r['status'] == 'delivered']
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("New Orders",  len(assigned))
-    c2.metric("Filling",     len(filling))
-    c3.metric("Ready",       len(ready))
+    c1.metric("📥 New Orders",  len(assigned))
+    c2.metric("⚗️ Filling",     len(filling))
+    c3.metric("✅ Ready",       len(ready))
 
     if pharmacy_account == 2 and not my_rxs:
-        st.info("No prescriptions assigned to this pharmacy yet. Prescriptions appear here when a patient's AI recommendation selects a second pharmacy location.")
+        st.markdown("""
+        <div style="text-align:center; padding:2.5rem; background:#F8FAFC; border-radius:16px; border:2px dashed #CBD5E1; margin-top:1rem;">
+            <div style="font-size:2.5rem;">🏪</div>
+            <h3 style="color:#64748B;">Waiting for orders</h3>
+            <p style="color:#94A3B8;">Prescriptions appear here when a patient's AI recommendation selects a second pharmacy location.</p>
+        </div>
+        """, unsafe_allow_html=True)
         return
 
-    tab1, tab2, tab3, tab4 = st.tabs(["📥 New Orders", "⚗️ Filling", "✅ Ready", "📦 Delivered"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📥 New Orders", "⚗️ Filling", "✅ Ready for Dispatch", "📦 Delivered"])
 
     with tab1:
         if not assigned:
-            st.info("No new orders.")
+            st.info("No new orders at this time.")
         for rx in assigned:
-            with st.expander(f"{rx['id']} – {rx['patient_name']} – {rx['medication']}"):
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+                st.markdown(status_pill(rx['status']), unsafe_allow_html=True)
+                st.markdown("<br>", unsafe_allow_html=True)
                 c1, c2, c3 = st.columns(3)
                 c1.write(f"**Qty:** {rx['quantity']}")
                 c2.write(f"**Insurance:** {rx['insurance']}")
                 c3.write(f"**Window:** {rx.get('delivery_time','—')}")
                 if rx.get('instructions'):
-                    st.write(f"**Instructions:** {rx['instructions']}")
-                if st.button(f"Accept Order", key=f"accept_{rx['id']}"):
+                    st.info(f"📝 {rx['instructions']}")
+                if st.button(f"✅ Accept Order", key=f"accept_{rx['id']}"):
                     with st.spinner("Verifying insurance..."):
                         time.sleep(0.8)
                     update_prescription_status(rx['id'], 'filling')
@@ -689,24 +1120,29 @@ def page_pharmacy():
 
     with tab2:
         if not filling:
-            st.info("No prescriptions being filled.")
+            st.info("No prescriptions currently being filled.")
         for rx in filling:
-            with st.expander(f"{rx['id']} – {rx['patient_name']} – {rx['medication']}"):
-                st.progress(60, text="Filling in progress... 60%")
-                if st.button(f"Mark Ready", key=f"ready_{rx['id']}"):
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+                st.progress(60, text="⚗️ Filling in progress — 60%")
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button(f"🟢 Mark as Ready", key=f"ready_{rx['id']}"):
                     update_prescription_status(rx['id'], 'ready')
                     st.rerun()
 
     with tab3:
         if not ready:
-            st.info("No prescriptions ready for pickup.")
+            st.info("No prescriptions ready for dispatch.")
 
         groq_key = st.session_state.groq_api_key
         maps_key = st.session_state.google_maps_api_key
 
         for rx in ready:
-            with st.expander(f"{rx['id']} – {rx['patient_name']} – {rx['medication']}"):
-                st.write(f"📍 Patient: {rx.get('location','—')}")
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+                st.markdown(f"""
+                <div style="background:#F0F9FF; border-radius:10px; padding:10px 14px; font-size:0.9rem; color:#0369A1; margin-bottom:10px;">
+                    📍 <strong>Patient:</strong> {rx.get('location','—')}
+                </div>
+                """, unsafe_allow_html=True)
 
                 if st.button(f"🤖 Find Best Driver with AI", key=f"find_drv_{rx['id']}"):
                     avail = [d for d in st.session_state.drivers if d['status'] == 'available']
@@ -715,7 +1151,7 @@ def page_pharmacy():
                     elif not groq_key:
                         st.error("Groq API key not configured.")
                     else:
-                        with st.spinner("Finding best driver..."):
+                        with st.spinner("🤖 AI is selecting the best driver..."):
                             if maps_key:
                                 maps = GoogleMapsAPI(maps_key)
                                 origins = f"{rx.get('pharmacy_address','Cincinnati, OH')}"
@@ -742,23 +1178,26 @@ def page_pharmacy():
                     rec_drv = next((d for d in st.session_state.drivers if d['id'] == rec_id), None)
 
                     if rec_drv:
-                        st.success(f"🏆 Recommended: **{rec_drv['name']}**")
+                        st.markdown(f"""
+                        <div class="driver-rec-card">
+                            <div style="font-weight:700; color:#1E40AF; font-size:1rem;">🏆 Recommended: {rec_drv['name']}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
                         m1, m2, m3, m4 = st.columns(4)
-                        m1.metric("AI Score", f"{rec.get('score','N/A')}/100")
-                        m2.metric("Pickup ETA", f"{rec.get('estimated_pickup_minutes','?')} min")
-                        m3.metric("Delivery ETA", f"{rec.get('estimated_delivery_minutes','?')} min")
-                        m4.metric("Rating", f"⭐ {rec_drv['rating']}")
+                        m1.metric("🤖 AI Score", f"{rec.get('score','N/A')}/100")
+                        m2.metric("⏱ Pickup ETA", f"{rec.get('estimated_pickup_minutes','?')} min")
+                        m3.metric("🚚 Delivery ETA", f"{rec.get('estimated_delivery_minutes','?')} min")
+                        m4.metric("⭐ Rating", rec_drv['rating'])
 
                         st.markdown("**Why this driver:**")
                         for r in rec.get('reasoning', []):
-                            st.write(f"• {r}")
+                            st.markdown(f'<div class="reasoning-item">✦ {r}</div>', unsafe_allow_html=True)
                         st.markdown("**Other options:**")
                         for opt in rec.get('ranked_options', []):
                             st.write(f"**{opt.get('name','')}** — Score: {opt.get('score','N/A')} — {opt.get('summary','')}")
 
-                        if st.button(f"Assign to {rec_drv['name']}", key=f"assign_{rx['id']}"):
+                        if st.button(f"🚗 Assign to {rec_drv['name']}", key=f"assign_{rx['id']}"):
                             eta = f"~{rec.get('estimated_delivery_minutes', 30)} min"
-                            # Assign all ready prescriptions for this pharmacy
                             for r in ready:
                                 update_prescription_status(
                                     r['id'], 'out_for_delivery',
@@ -766,7 +1205,6 @@ def page_pharmacy():
                                     driver_name=rec_drv['name'],
                                     estimated_delivery_time=eta
                                 )
-                            # Mark driver busy
                             for d in st.session_state.drivers:
                                 if d['id'] == rec_id:
                                     d['status'] = 'busy'
@@ -776,9 +1214,18 @@ def page_pharmacy():
 
     with tab4:
         if not delivered_today:
-            st.info("No deliveries completed yet.")
+            st.info("No deliveries completed yet today.")
         for rx in delivered_today:
-            st.write(f"✅ **{rx['id']}** – {rx['patient_name']} – {rx['medication']} – Driver: {rx.get('driver_name','—')} – {rx.get('delivered_at','')}")
+            st.markdown(f"""
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#F8FAFC; border-radius:10px; margin-bottom:6px; border:1px solid #E2E8F0;">
+                <span style="font-size:1.2rem;">✅</span>
+                <div>
+                    <span style="font-weight:600; color:#0F172A;">{rx['id']}</span>
+                    <span style="color:#64748B;"> · {rx['patient_name']} · {rx['medication']}</span>
+                    <div style="font-size:0.8rem; color:#94A3B8; margin-top:2px;">🚗 {rx.get('driver_name','—')} · {rx.get('delivered_at','')}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 
 # =====================================================
@@ -790,37 +1237,53 @@ def page_driver():
     driver_id   = user['driver_id']
     driver_name = user['name']
 
-    st.title(f"🚗 Driver App")
-    st.caption(f"Logged in as {driver_name}")
+    page_header("🚗", "Driver App", f"Logged in as {driver_name}", "driver")
 
     driver_obj = next((d for d in st.session_state.drivers if d['id'] == driver_id), None)
 
     active    = [r for r in st.session_state.prescriptions if r['status'] == 'out_for_delivery' and r.get('driver_id') == driver_id]
     completed = [r for r in st.session_state.prescriptions if r['status'] == 'delivered' and r.get('driver_id') == driver_id]
 
+    is_available = driver_obj and driver_obj['status'] == 'available'
+    status_html = (
+        '<span style="background:#D1FAE5;color:#065F46;padding:4px 14px;border-radius:99px;font-weight:700;font-size:0.85rem;">🟢 Available</span>'
+        if is_available else
+        '<span style="background:#FEE2E2;color:#991B1B;padding:4px 14px;border-radius:99px;font-weight:700;font-size:0.85rem;">🔴 On Delivery</span>'
+    )
+    st.markdown(status_html, unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
     c1, c2, c3 = st.columns(3)
-    status_label = "🟢 Available" if driver_obj and driver_obj['status'] == 'available' else "🔴 Busy"
-    c1.metric("Status",            status_label)
-    c2.metric("Active Deliveries", len(active))
-    c3.metric("Completed Today",   len(completed))
+    c1.metric("📦 Active Deliveries", len(active))
+    c2.metric("✅ Completed Today",   len(completed))
+    c3.metric("⭐ Rating", driver_obj['rating'] if driver_obj else "—")
 
     tab1, tab2 = st.tabs(["🚚 Active Deliveries", "✅ Completed"])
 
     with tab1:
         if not active:
-            st.info("No active deliveries assigned to you.")
+            st.markdown("""
+            <div style="text-align:center; padding:2.5rem; background:#FFFBEB; border-radius:16px; border:2px dashed #FCD34D; margin-top:1rem;">
+                <div style="font-size:2.5rem;">🚗</div>
+                <h3 style="color:#92400E;">No active deliveries</h3>
+                <p style="color:#B45309;">You'll see new deliveries here once a pharmacy assigns them to you.</p>
+            </div>
+            """, unsafe_allow_html=True)
         for rx in active:
-            with st.expander(f"{rx['id']} – {rx['patient_name']} – {rx['medication']}"):
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
                 col_info, col_steps = st.columns([1.2, 1])
 
                 with col_info:
-                    st.write(f"**Patient:** {rx['patient_name']}")
-                    st.write(f"**Address:** {rx.get('location','—')}")
-                    st.write(f"**Medication:** {rx['medication']}")
-                    st.write(f"**Window:** {rx.get('delivery_time','—')}")
-                    if rx.get('instructions'):
-                        st.write(f"**Instructions:** {rx['instructions']}")
-                    st.write(f"**Pickup Pharmacy:** {rx.get('pharmacy_name','—')}")
+                    st.markdown(f"""
+                    <div style="background:#FAFAFA; border-radius:12px; padding:14px; font-size:0.9rem; line-height:1.8;">
+                        <div><strong>👤 Patient:</strong> {rx['patient_name']}</div>
+                        <div><strong>📍 Address:</strong> {rx.get('location','—')}</div>
+                        <div><strong>💊 Medication:</strong> {rx['medication']}</div>
+                        <div><strong>🕐 Window:</strong> {rx.get('delivery_time','—')}</div>
+                        <div><strong>🏪 Pickup:</strong> {rx.get('pharmacy_name','—')}</div>
+                        {"<div><strong>📝 Note:</strong> " + rx['instructions'] + "</div>" if rx.get('instructions') else ""}
+                    </div>
+                    """, unsafe_allow_html=True)
 
                 with col_steps:
                     ms = rx['milestones']
@@ -832,7 +1295,7 @@ def page_driver():
                             add_activity(f"{driver_name} started GPS for {rx['id']}")
                             st.rerun()
                     else:
-                        st.success("✅ GPS Started")
+                        st.markdown('<div class="milestone-step milestone-done">✅ GPS Started</div>', unsafe_allow_html=True)
 
                     if ms['gps_started'] and not ms['photo_captured']:
                         if st.button("📸 Capture Photo", key=f"photo_{rx['id']}"):
@@ -840,7 +1303,7 @@ def page_driver():
                             add_activity(f"{driver_name} captured photo for {rx['id']}")
                             st.rerun()
                     elif ms['photo_captured']:
-                        st.success("✅ Photo Captured")
+                        st.markdown('<div class="milestone-step milestone-done">✅ Photo Captured</div>', unsafe_allow_html=True)
 
                     if ms['photo_captured'] and not ms['signature_obtained']:
                         if st.button("✍️ Get Signature", key=f"sig_{rx['id']}"):
@@ -848,7 +1311,7 @@ def page_driver():
                             add_activity(f"{driver_name} got signature for {rx['id']}")
                             st.rerun()
                     elif ms['signature_obtained']:
-                        st.success("✅ Signature Obtained")
+                        st.markdown('<div class="milestone-step milestone-done">✅ Signature Obtained</div>', unsafe_allow_html=True)
 
                     if ms['signature_obtained'] and not ms['delivered']:
                         if st.button("🏁 Complete Delivery", key=f"complete_{rx['id']}"):
@@ -857,7 +1320,6 @@ def page_driver():
                                 delivered_at=datetime.now().strftime("%Y-%m-%d %H:%M")
                             )
                             ms['delivered'] = True
-                            # Check if driver has remaining deliveries
                             still_active = [r for r in st.session_state.prescriptions
                                             if r['status'] == 'out_for_delivery' and r.get('driver_id') == driver_id]
                             if not still_active and driver_obj:
@@ -867,9 +1329,18 @@ def page_driver():
 
     with tab2:
         if not completed:
-            st.info("No completed deliveries.")
+            st.info("No completed deliveries yet.")
         for rx in completed:
-            st.write(f"✅ **{rx['id']}** – {rx['medication']} – {rx['patient_name']} – {rx.get('delivered_at','')}")
+            st.markdown(f"""
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:#F0FDF4; border-radius:10px; margin-bottom:6px; border:1px solid #BBF7D0;">
+                <span style="font-size:1.2rem;">✅</span>
+                <div>
+                    <span style="font-weight:600; color:#14532D;">{rx['id']}</span>
+                    <span style="color:#166534;"> · {rx['medication']} · {rx['patient_name']}</span>
+                    <div style="font-size:0.8rem; color:#4ADE80; margin-top:2px;">🕐 {rx.get('delivered_at','')}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 
 # =====================================================
@@ -877,58 +1348,72 @@ def page_driver():
 # =====================================================
 
 def page_admin():
-    st.title("📊 Admin Dashboard")
-    st.caption(f"Logged in as {st.session_state.user_display_name}")
+    page_header("📊", "Admin Dashboard", f"Logged in as {st.session_state.user_display_name}", "admin")
 
     rxs = st.session_state.prescriptions
     drivers = st.session_state.drivers
 
-    active    = [r for r in rxs if r['status'] != 'delivered']
-    delivered = [r for r in rxs if r['status'] == 'delivered']
+    active        = [r for r in rxs if r['status'] != 'delivered']
+    delivered     = [r for r in rxs if r['status'] == 'delivered']
     avail_drivers = [d for d in drivers if d['status'] == 'available']
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Active Prescriptions", len(active))
-    c2.metric("Delivered Today",      len(delivered))
-    c3.metric("Available Drivers",    len(avail_drivers))
-    c4.metric("Avg Delivery Time",    "22 min")
+    c1.metric("💊 Active Prescriptions", len(active))
+    c2.metric("✅ Delivered Today",       len(delivered))
+    c3.metric("🚗 Available Drivers",     len(avail_drivers))
+    c4.metric("⏱ Avg Delivery Time",      "22 min")
 
     col_feed, col_stats = st.columns([2, 1])
 
     with col_feed:
-        st.subheader("Live Activity Feed")
-        with st.container(height=400):
+        st.markdown("#### 📡 Live Activity Feed")
+        with st.container(height=420):
             if not st.session_state.activity_log:
-                st.info("No activity yet.")
+                st.markdown("""
+                <div style="text-align:center; color:#94A3B8; padding:2rem;">
+                    No activity yet. Actions across all portals will appear here in real time.
+                </div>
+                """, unsafe_allow_html=True)
             for entry in reversed(st.session_state.activity_log):
-                st.text(entry)
+                st.markdown(f'<div class="activity-entry">{entry}</div>', unsafe_allow_html=True)
 
     with col_stats:
-        st.subheader("Status Summary")
+        st.markdown("#### 📈 Status Breakdown")
         status_counts = {
-            '🟡 Pending':         sum(1 for r in rxs if r['status'] == 'pending'),
-            '🟠 Assigned':        sum(1 for r in rxs if r['status'] == 'assigned'),
-            '🔵 Filling':         sum(1 for r in rxs if r['status'] == 'filling'),
-            '🟢 Ready':           sum(1 for r in rxs if r['status'] == 'ready'),
-            '🚚 Out for Delivery': sum(1 for r in rxs if r['status'] == 'out_for_delivery'),
-            '✅ Delivered':        sum(1 for r in rxs if r['status'] == 'delivered'),
+            ('pending',          '⏳', 'Pending',         '#FEF3C7', '#92400E'):  sum(1 for r in rxs if r['status'] == 'pending'),
+            ('assigned',         '📋', 'Assigned',        '#FED7AA', '#9A3412'):  sum(1 for r in rxs if r['status'] == 'assigned'),
+            ('filling',          '⚗️', 'Filling',         '#DBEAFE', '#1E40AF'):  sum(1 for r in rxs if r['status'] == 'filling'),
+            ('ready',            '✅', 'Ready',            '#D1FAE5', '#065F46'):  sum(1 for r in rxs if r['status'] == 'ready'),
+            ('out_for_delivery', '🚚', 'Out for Delivery', '#E0E7FF', '#3730A3'):  sum(1 for r in rxs if r['status'] == 'out_for_delivery'),
+            ('delivered',        '🏁', 'Delivered',        '#DCFCE7', '#14532D'):  sum(1 for r in rxs if r['status'] == 'delivered'),
         }
-        for label, count in status_counts.items():
-            st.metric(label, count)
+        for (_, icon, label, bg, color), count in status_counts.items():
+            st.markdown(f"""
+            <div style="display:flex; justify-content:space-between; align-items:center;
+                        background:{bg}; border-radius:10px; padding:10px 14px; margin-bottom:6px;">
+                <span style="font-weight:600; color:{color};">{icon} {label}</span>
+                <span style="font-weight:800; color:{color}; font-size:1.2rem;">{count}</span>
+            </div>
+            """, unsafe_allow_html=True)
 
     st.markdown("---")
-    st.subheader("All Prescriptions")
+    st.markdown("#### 📋 All Prescriptions")
     if not rxs:
         st.info("No prescriptions in the system yet.")
     else:
         for rx in rxs:
-            status_icons = {
-                'pending': '🟡', 'assigned': '🟠', 'filling': '🔵',
-                'ready': '🟢', 'out_for_delivery': '🚚', 'delivered': '✅'
-            }
-            icon = status_icons.get(rx['status'], '⬜')
-            ph_acct = f" | Pharmacy {rx.get('pharmacy_account','—')}" if rx.get('pharmacy_account') else ""
-            st.write(f"{icon} **{rx['id']}** – {rx['patient_name']} – {rx['medication']} – `{rx['status']}`{ph_acct}")
+            ph_acct = f" · Pharmacy {rx.get('pharmacy_account','—')}" if rx.get('pharmacy_account') else ""
+            st.markdown(f"""
+            <div style="display:flex; align-items:center; justify-content:space-between;
+                        padding:10px 16px; background:white; border:1px solid #E2E8F0;
+                        border-radius:10px; margin-bottom:5px;">
+                <div>
+                    <span style="font-weight:700; color:#0F172A;">{rx['id']}</span>
+                    <span style="color:#64748B;"> · {rx['patient_name']} · {rx['medication']}{ph_acct}</span>
+                </div>
+                {status_pill(rx['status'])}
+            </div>
+            """, unsafe_allow_html=True)
 
 
 # =====================================================
@@ -937,7 +1422,7 @@ def page_admin():
 
 def main():
     st.set_page_config(
-        page_title="Prescription Delivery",
+        page_title="RxDeliver – Prescription Delivery",
         page_icon="💊",
         layout="wide",
         initial_sidebar_state="expanded"
@@ -945,40 +1430,58 @@ def main():
     apply_custom_css()
     init_session_state()
 
-    # ── Show login if not authenticated ──
     if not st.session_state.logged_in:
         login_page()
         return
 
     role = st.session_state.user_role
     name = st.session_state.user_display_name
+    colors = ROLE_COLORS.get(role, ROLE_COLORS["patient"])
 
-    # ── Sidebar ──
     with st.sidebar:
-        st.markdown(f"**{name}**")
-        st.caption(f"Role: {role.capitalize()}")
-        st.markdown("---")
+        st.markdown(f"""
+        <div style="padding: 0.5rem 0 1rem 0;">
+            <div style="font-size:1.5rem; margin-bottom:0.25rem;">💊</div>
+            <div style="font-size:1.1rem; font-weight:700; color:#F1F5F9;">RxDeliver</div>
+            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Prescription Platform</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        if role == "provider":
-            st.markdown("👨‍⚕️ Provider Portal")
-        elif role == "patient":
-            st.markdown("👤 Patient Portal")
-        elif role == "pharmacy":
-            st.markdown("🏪 Pharmacy Dashboard")
-        elif role == "driver":
-            st.markdown("🚗 Driver App")
-        elif role == "admin":
-            st.markdown("📊 Admin Dashboard")
+        st.markdown(f"""
+        <div style="background:#1E293B; border-radius:12px; padding:12px 14px; margin-bottom:1rem;">
+            <div style="font-size:0.7rem; color:#64748B; text-transform:uppercase; letter-spacing:0.08em; font-weight:600;">Signed in as</div>
+            <div style="font-weight:700; color:#F1F5F9; margin-top:2px;">{name}</div>
+            <div style="margin-top:6px;">
+                <span style="background:{colors['primary']}22; color:{colors['primary']}; padding:2px 10px;
+                             border-radius:99px; font-size:0.72rem; font-weight:700; text-transform:uppercase;
+                             letter-spacing:0.05em;">{role}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        st.markdown("---")
-        if st.button("🚪 Sign Out"):
+        role_nav = {
+            "provider": "👨‍⚕️  Provider Portal",
+            "patient":  "👤  Patient Portal",
+            "pharmacy": "🏪  Pharmacy Dashboard",
+            "driver":   "🚗  Driver App",
+            "admin":    "📊  Admin Dashboard",
+        }
+        st.markdown(f"""
+        <div style="background:{colors['primary']}18; border-left:3px solid {colors['primary']};
+                    border-radius:0 8px 8px 0; padding:8px 14px; font-weight:600;
+                    color:{colors['primary']}; font-size:0.9rem; margin-bottom:1rem;">
+            {role_nav.get(role, role)}
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("🚪  Sign Out"):
             st.session_state.logged_in = False
             st.session_state.username = None
             st.session_state.user_role = None
             st.session_state.user_display_name = None
             st.rerun()
 
-    # ── Route to correct page ──
     if role == "provider":
         page_provider()
     elif role == "patient":
