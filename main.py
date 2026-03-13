@@ -529,12 +529,10 @@ def page_patient():
 
                     # ── PHARMACY SEARCH ────────────────────────────
                     if rx['location'] and not rx.get('pharmacy_confirmed'):
-                        if st.button(f"🤖 Find Nearby Pharmacies with AI", key=f"find_ph_{rx['id']}"):
-                            if not maps_key:
-                                st.error("Google Maps API key not configured.")
-                            elif not groq_key:
-                                st.error("Groq API key not configured.")
-                            else:
+                        if not maps_key or not groq_key:
+                            st.error("⚠️ API keys are not configured. An admin must add GOOGLE_MAPS_API_KEY and GROQ_API_KEY as environment secrets in the HF Space settings.")
+                        elif st.button(f"🤖 Find Nearby Pharmacies with AI", key=f"find_ph_{rx['id']}"):
+                            if True:
                                 with st.status("Analyzing pharmacies...", expanded=True) as status:
                                     st.write("🔍 Searching nearby pharmacies...")
                                     maps = GoogleMapsAPI(maps_key)
