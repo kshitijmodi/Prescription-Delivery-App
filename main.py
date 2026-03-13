@@ -715,8 +715,7 @@ def page_pharmacy():
                     elif not groq_key:
                         st.error("Groq API key not configured.")
                     else:
-                        with st.status("Finding best driver...", expanded=True) as status:
-                            st.write("📍 Calculating distances...")
+                        with st.spinner("Finding best driver..."):
                             if maps_key:
                                 maps = GoogleMapsAPI(maps_key)
                                 origins = f"{rx.get('pharmacy_address','Cincinnati, OH')}"
@@ -727,7 +726,6 @@ def page_pharmacy():
                                         d['distance_to_pharmacy'] = routes[i]['distance']
                                         d['eta_to_pharmacy'] = routes[i]['duration']
 
-                            st.write("🤖 AI scoring drivers...")
                             groq = GroqAI(groq_key)
                             rec = groq.recommend_driver(
                                 avail,
@@ -736,9 +734,7 @@ def page_pharmacy():
                                 rx.get('delivery_time', 'standard')
                             )
                             rx['driver_recommendation'] = rec
-                            st.write("✅ Analysis complete!")
-                            status.update(label="Done!", state="complete")
-                            st.rerun()
+                        st.rerun()
 
                 if rx.get('driver_recommendation'):
                     rec = rx['driver_recommendation']
