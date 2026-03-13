@@ -65,9 +65,13 @@ class GoogleMapsAPI:
             geo_data = geo_response.json()
 
             if geo_data['status'] != 'OK':
-                st.error("❌ Could not locate address. Please verify and try again.")
-                if geo_data['status'] == 'REQUEST_DENIED':
-                    st.error("Google Maps API issue. Please check that Geocoding API is enabled.")
+                status_code = geo_data.get('status', 'UNKNOWN')
+                error_msg   = geo_data.get('error_message', 'No details provided by Google.')
+                if status_code == 'REQUEST_DENIED':
+                    st.error(f"❌ Google Maps REQUEST_DENIED — {error_msg}")
+                    st.warning("Common fixes: (1) Enable Geocoding API in GCP Console, (2) Remove HTTP-referrer restrictions from your API key (server calls need IP or no restriction), (3) Ensure billing is active on your GCP project.")
+                else:
+                    st.error(f"❌ Geocoding failed — status: {status_code} — {error_msg}")
                 return None
 
             location = geo_data['results'][0]['geometry']['location']
