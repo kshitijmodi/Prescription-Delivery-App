@@ -973,16 +973,6 @@ def main():
             st.markdown("📊 Admin Dashboard")
 
         st.markdown("---")
-        # API key inputs (available to all roles for demo)
-        with st.expander("⚙️ API Keys"):
-            groq = st.text_input("Groq API Key", value=st.session_state.groq_api_key, type="password")
-            gmaps = st.text_input("Google Maps Key", value=st.session_state.google_maps_api_key, type="password")
-            if groq  != st.session_state.groq_api_key:
-                st.session_state.groq_api_key = groq
-            if gmaps != st.session_state.google_maps_api_key:
-                st.session_state.google_maps_api_key = gmaps
-
-        st.markdown("---")
         if st.button("🚪 Sign Out"):
             st.session_state.logged_in = False
             st.session_state.username = None
