@@ -119,8 +119,6 @@ streamlit run main.py
 | `GROQ_API_KEY` | Groq API key for AI recommendations |
 | `GOOGLE_MAPS_API_KEY` | Google Maps for routing and pharmacy search |
 
-> API keys can also be entered directly in the app sidebar under ⚙️ API Keys.
-
 ---
 
 ## 📄 License
