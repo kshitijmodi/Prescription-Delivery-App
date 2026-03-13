@@ -714,8 +714,19 @@ def status_pill(status):
 def login_page():
     st.markdown("""
     <div class="login-hero">
-        <div class="login-logo">💊</div>
-        <h1 class="login-title">RxDeliver</h1>
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:12px;">
+            <rect width="72" height="72" rx="20" fill="url(#loginGrad)"/>
+            <defs>
+                <linearGradient id="loginGrad" x1="0" y1="0" x2="72" y2="72" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#0EA5E9"/>
+                    <stop offset="100%" stop-color="#6366F1"/>
+                </linearGradient>
+            </defs>
+            <rect x="32" y="14" width="8" height="44" rx="4" fill="white"/>
+            <rect x="14" y="32" width="44" height="8" rx="4" fill="white"/>
+            <circle cx="52" cy="20" r="6" fill="#F0F9FF" opacity="0.5"/>
+        </svg>
+        <h1 class="login-title">RxPrescribe</h1>
         <p class="login-subtitle">Intelligent Prescription Delivery Platform</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1420,8 +1431,8 @@ def page_admin():
 
 def main():
     st.set_page_config(
-        page_title="RxDeliver – Prescription Delivery",
-        page_icon="💊",
+        page_title="RxPrescribe – Prescription Delivery",
+        page_icon="⚕️",
         layout="wide",
         initial_sidebar_state="expanded"
     )
@@ -1439,8 +1450,18 @@ def main():
     with st.sidebar:
         st.markdown(f"""
         <div style="padding: 0.5rem 0 1rem 0;">
-            <div style="font-size:1.5rem; margin-bottom:0.25rem;">💊</div>
-            <div style="font-size:1.1rem; font-weight:700; color:#F1F5F9;">RxDeliver</div>
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:4px;">
+                <rect width="36" height="36" rx="10" fill="url(#sidebarGrad)"/>
+                <defs>
+                    <linearGradient id="sidebarGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#0EA5E9"/>
+                        <stop offset="100%" stop-color="#6366F1"/>
+                    </linearGradient>
+                </defs>
+                <rect x="16" y="7" width="4" height="22" rx="2" fill="white"/>
+                <rect x="7" y="16" width="22" height="4" rx="2" fill="white"/>
+            </svg>
+            <div style="font-size:1.1rem; font-weight:700; color:#F1F5F9;">RxPrescribe</div>
             <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Prescription Platform</div>
         </div>
         """, unsafe_allow_html=True)

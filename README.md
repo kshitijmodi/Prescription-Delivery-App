@@ -1,6 +1,6 @@
 ---
-title: Prescription Delivery App
-emoji: 💊
+title: RxPrescribe
+emoji: ⚕️
 colorFrom: blue
 colorTo: green
 sdk: streamlit
