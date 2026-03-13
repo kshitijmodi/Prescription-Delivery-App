@@ -1,8 +1,7 @@
-streamlit==1.31.0
+streamlit>=1.40.0
 requests==2.31.0
 python-dotenv==1.0.0
 assemblyai
 groq
 streamlit-audiorecorder
-pyarrow==18.1.0
-numpy>=2.0.0
+pyarrow>=18.0.0
