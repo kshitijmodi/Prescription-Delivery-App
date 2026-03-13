@@ -305,7 +305,7 @@ ROLE_COLORS = {
 }
 
 def apply_custom_css():
-    st.markdown("""
+    st.html("""
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
 
@@ -678,7 +678,7 @@ def apply_custom_css():
     }
 
     </style>
-    """, unsafe_allow_html=True)
+    """)
 
 
 def page_header(icon, title, subtitle, role="patient"):
