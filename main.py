@@ -749,12 +749,12 @@ def page_pharmacy():
                         m3.metric("Delivery ETA", f"{rec.get('estimated_delivery_minutes','?')} min")
                         m4.metric("Rating", f"⭐ {rec_drv['rating']}")
 
-                        with st.expander("Why this driver?"):
-                            for r in rec.get('reasoning', []):
-                                st.write(f"• {r}")
-                        with st.expander("Other driver options"):
-                            for opt in rec.get('ranked_options', []):
-                                st.write(f"**{opt.get('name','')}** — Score: {opt.get('score','N/A')} — {opt.get('summary','')}")
+                        st.markdown("**Why this driver:**")
+                        for r in rec.get('reasoning', []):
+                            st.write(f"• {r}")
+                        st.markdown("**Other options:**")
+                        for opt in rec.get('ranked_options', []):
+                            st.write(f"**{opt.get('name','')}** — Score: {opt.get('score','N/A')} — {opt.get('summary','')}")
 
                         if st.button(f"Assign to {rec_drv['name']}", key=f"assign_{rx['id']}"):
                             eta = f"~{rec.get('estimated_delivery_minutes', 30)} min"
