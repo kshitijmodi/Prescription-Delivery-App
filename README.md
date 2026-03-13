@@ -1,3 +1,14 @@
+---
+title: Prescription Delivery App
+emoji: 💊
+colorFrom: blue
+colorTo: green
+sdk: streamlit
+sdk_version: 1.31.0
+app_file: main.py
+pinned: false
+---
+
 # 💊 Prescription Delivery App
 
 Architected a full-stack prescription delivery platform bringing on-demand delivery infrastructure to medications, with AI-powered smart pharmacy matching, route optimization, and predictive inventory, targeting a $600B market still reliant on phone calls.
