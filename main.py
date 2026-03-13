@@ -310,7 +310,7 @@ def apply_custom_css():
     <style>
 
     /* ── Global ── */
-    html, body, [class*="css"] {
+    html, body, * {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
     .main .block-container {
@@ -722,13 +722,11 @@ def login_page():
 
     col1, col2, col3 = st.columns([1, 1.1, 1])
     with col2:
-        st.markdown('<div class="login-card">', unsafe_allow_html=True)
         with st.form("login_form"):
             st.markdown("#### Sign in to your account")
             username = st.text_input("Username", placeholder="Enter your username")
             password = st.text_input("Password", type="password", placeholder="Enter your password")
             submitted = st.form_submit_button("Sign In →", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
         if submitted:
             user = USERS.get(username)
