@@ -753,21 +753,51 @@ def login_page():
         st.markdown("<br>", unsafe_allow_html=True)
         with st.expander("🔑 View Demo Credentials"):
             st.markdown("""
-| Role | Username | Password |
-|------|----------|----------|
-| 👨‍⚕️ Provider | `provider` | `rx2024` |
-| 👤 Patient – John Doe | `john_doe` | `pass123` |
-| 👤 Patient – Sarah Smith | `sarah_smith` | `pass123` |
-| 👤 Patient – Michael Chen | `michael_chen` | `pass123` |
-| 👤 Patient – Emily Davis | `emily_davis` | `pass123` |
-| 👤 Patient – Robert Jones | `robert_jones` | `pass123` |
-| 🏪 Pharmacy 1 | `pharmacy1` | `pharma1` |
-| 🏪 Pharmacy 2 | `pharmacy2` | `pharma2` |
-| 🚗 Driver – Mike Johnson | `mike_j` | `drive1` |
-| 🚗 Driver – Linda Chen | `linda_c` | `drive1` |
-| 🚗 Driver – David Kim | `david_k` | `drive1` |
-| 📊 Admin | `admin` | `admin1` |
-""")
+<style>
+[data-testid="stExpander"] .stDataFrame {
+    font-size: 15px !important;
+    color: #111111 !important;
+}
+[data-testid="stExpander"] .stDataFrame td,
+[data-testid="stExpander"] .stDataFrame th {
+    font-size: 15px !important;
+    color: #111111 !important;
+    font-weight: 500;
+}
+[data-testid="stExpander"] .stDataFrame th {
+    font-weight: 700 !important;
+    background-color: #f0f2f6 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+            import pandas as pd
+            credentials_data = {
+                "Role": [
+                    "👨‍⚕️ Provider",
+                    "👤 Patient – John Doe",
+                    "👤 Patient – Sarah Smith",
+                    "👤 Patient – Michael Chen",
+                    "👤 Patient – Emily Davis",
+                    "👤 Patient – Robert Jones",
+                    "🏪 Pharmacy 1",
+                    "🏪 Pharmacy 2",
+                    "🚗 Driver – Mike Johnson",
+                    "🚗 Driver – Linda Chen",
+                    "🚗 Driver – David Kim",
+                    "📊 Admin",
+                ],
+                "Username": [
+                    "provider", "john_doe", "sarah_smith", "michael_chen",
+                    "emily_davis", "robert_jones", "pharmacy1", "pharmacy2",
+                    "mike_j", "linda_c", "david_k", "admin",
+                ],
+                "Password": [
+                    "rx2024", "pass123", "pass123", "pass123",
+                    "pass123", "pass123", "pharma1", "pharma2",
+                    "drive1", "drive1", "drive1", "admin1",
+                ],
+            }
+            st.dataframe(pd.DataFrame(credentials_data), use_container_width=True, hide_index=True)
 
 
 # =====================================================
