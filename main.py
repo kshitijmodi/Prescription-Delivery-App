@@ -321,35 +321,138 @@ def apply_custom_css():
 
     /* ── Sidebar ── */
     [data-testid="stSidebar"] {
-        background: #0F172A !important;
-        border-right: 1px solid #1E293B;
+        background: linear-gradient(180deg, #0D1B2A 0%, #112240 45%, #0D1B2A 100%) !important;
+        border-right: 1px solid rgba(99,102,241,0.25) !important;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.35) !important;
+    }
+    [data-testid="stSidebar"] > div:first-child {
+        padding-top: 1.25rem !important;
     }
     [data-testid="stSidebar"] * {
-        color: #CBD5E1 !important;
+        color: #B8C6D9 !important;
     }
     [data-testid="stSidebar"] .stMarkdown h1,
     [data-testid="stSidebar"] .stMarkdown h2,
     [data-testid="stSidebar"] .stMarkdown h3,
     [data-testid="stSidebar"] .stMarkdown strong {
-        color: #F1F5F9 !important;
+        color: #E2E8F0 !important;
+        letter-spacing: 0.01em !important;
     }
     [data-testid="stSidebar"] hr {
-        border-color: #1E293B !important;
+        border-color: rgba(99,102,241,0.2) !important;
+        margin: 0.75rem 0 !important;
     }
-    [data-testid="stSidebar"] .stButton > button {
-        background: #1E293B !important;
-        color: #F1F5F9 !important;
-        border: 1px solid #334155 !important;
+
+    /* Sidebar radio nav items */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0.5rem 0.75rem !important;
         border-radius: 10px !important;
+        margin-bottom: 2px !important;
+        transition: background 0.2s ease, color 0.2s ease !important;
+        cursor: pointer !important;
         font-weight: 500 !important;
-        transition: all 0.2s ease !important;
+        font-size: 0.875rem !important;
+        color: #94A3B8 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+        background: rgba(99,102,241,0.12) !important;
+        color: #E2E8F0 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] [aria-checked="true"] + div,
+    [data-testid="stSidebar"] [data-testid="stRadio"] input:checked ~ div {
+        color: #818CF8 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Sidebar selectbox */
+    [data-testid="stSidebar"] .stSelectbox > div > div {
+        background: rgba(30,41,59,0.7) !important;
+        border: 1px solid rgba(99,102,241,0.3) !important;
+        border-radius: 10px !important;
+        color: #CBD5E1 !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox > div > div:hover {
+        border-color: rgba(99,102,241,0.6) !important;
+    }
+
+    /* Sidebar text inputs */
+    [data-testid="stSidebar"] .stTextInput > div > div > input {
+        background: rgba(30,41,59,0.7) !important;
+        border: 1px solid rgba(99,102,241,0.3) !important;
+        border-radius: 10px !important;
+        color: #E2E8F0 !important;
+    }
+    [data-testid="stSidebar"] .stTextInput > div > div > input:focus {
+        border-color: #6366F1 !important;
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.15) !important;
+    }
+
+    /* Sidebar section labels */
+    [data-testid="stSidebar"] .stMarkdown p {
+        color: #94A3B8 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Sidebar caption / small text */
+    [data-testid="stSidebar"] small,
+    [data-testid="stSidebar"] .stCaption {
+        color: #64748B !important;
+        font-size: 0.78rem !important;
+    }
+
+    /* ── Sign-out button (sidebar) ── */
+    [data-testid="stSidebar"] .stButton > button {
+        background: linear-gradient(135deg, rgba(239,68,68,0.07) 0%, rgba(220,38,38,0.11) 100%) !important;
+        color: #FCA5A5 !important;
+        border: 1px solid rgba(239,68,68,0.28) !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        letter-spacing: 0.03em !important;
+        padding: 0.6rem 1rem !important;
+        transition: all 0.25s ease !important;
         width: 100% !important;
+        box-shadow: 0 1px 6px rgba(239,68,68,0.10), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+        text-align: center !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    [data-testid="stSidebar"] .stButton > button::before {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background: linear-gradient(135deg, rgba(239,68,68,0.0) 0%, rgba(239,68,68,0.06) 100%) !important;
+        opacity: 0 !important;
+        transition: opacity 0.25s ease !important;
+        border-radius: inherit !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: #EF4444 !important;
-        border-color: #EF4444 !important;
-        color: white !important;
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, rgba(239,68,68,0.18) 0%, rgba(220,38,38,0.26) 100%) !important;
+        border-color: rgba(239,68,68,0.55) !important;
+        color: #FECACA !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(239,68,68,0.25), 0 1px 4px rgba(239,68,68,0.15) !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover::before {
+        opacity: 1 !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:active {
+        transform: translateY(0px) !important;
+        box-shadow: 0 1px 6px rgba(239,68,68,0.15) !important;
+    }
+
+    /* Sidebar accent divider line at top */
+    [data-testid="stSidebar"]::before {
+        content: "" !important;
+        display: block !important;
+        height: 3px !important;
+        background: linear-gradient(90deg, #6366F1, #0EA5E9, #10B981) !important;
+        border-radius: 0 0 3px 3px !important;
+        position: sticky !important;
+        top: 0 !important;
     }
 
     /* ── Buttons ── */
@@ -605,18 +708,22 @@ def apply_custom_css():
         50% { transform: scale(1.06); }
     }
     .login-title {
-        font-size: 2rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #0EA5E9, #6366F1);
+        font-size: 2.6rem;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #0EA5E9 0%, #6366F1 55%, #8B5CF6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin: 0;
+        line-height: 1.1;
     }
     .login-subtitle {
         color: #64748B;
         font-size: 1rem;
-        margin-top: 0.4rem;
+        margin-top: 0.5rem;
+        letter-spacing: 0.02em;
+        font-weight: 400;
     }
     .login-card {
         background: white;
@@ -671,6 +778,31 @@ def apply_custom_css():
     ::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 99px; }
     ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
     ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* ── Sidebar brand / app title ── */
+    .sidebar-brand {
+        text-align: center;
+        padding: 0.5rem 0 1.25rem 0;
+    }
+    .sidebar-brand-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #93C5FD 0%, #818CF8 55%, #A78BFA 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-top: 6px;
+        line-height: 1.2;
+    }
+    .sidebar-brand-subtitle {
+        font-size: 0.68rem;
+        color: #475569 !important;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-top: 3px;
+        font-weight: 500;
+    }
 
     /* ── Spinner ── */
     [data-testid="stSpinner"] > div {
@@ -1466,31 +1598,63 @@ def main():
 
     with st.sidebar:
         st.markdown(f"""
-        <div style="padding: 0.5rem 0 1rem 0;">
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:4px;">
-                <rect width="36" height="36" rx="10" fill="url(#sidebarGrad)"/>
-                <defs>
-                    <linearGradient id="sidebarGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#0EA5E9"/>
-                        <stop offset="100%" stop-color="#6366F1"/>
-                    </linearGradient>
-                </defs>
-                <rect x="16" y="7" width="4" height="22" rx="2" fill="white"/>
-                <rect x="7" y="16" width="22" height="4" rx="2" fill="white"/>
-            </svg>
-            <div style="font-size:1.1rem; font-weight:700; color:#F1F5F9;">RxPrescribe</div>
-            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Prescription Platform</div>
+        <div class="sidebar-brand">
+            <div style="display:flex; justify-content:center; margin-bottom:4px;">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="48" height="48" rx="14" fill="url(#sidebarGrad)"/>
+                    <defs>
+                        <linearGradient id="sidebarGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#0EA5E9"/>
+                            <stop offset="100%" stop-color="#6366F1"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="22" y="10" width="4" height="28" rx="2" fill="white"/>
+                    <rect x="10" y="22" width="28" height="4" rx="2" fill="white"/>
+                </svg>
+            </div>
+            <div class="sidebar-brand-title">RxPrescribe</div>
+            <div class="sidebar-brand-subtitle">Prescription Platform</div>
         </div>
         """, unsafe_allow_html=True)
 
+        initials = "".join(w[0].upper() for w in name.split()[:2])
         st.markdown(f"""
-        <div style="background:#1E293B; border-radius:12px; padding:12px 14px; margin-bottom:1rem;">
-            <div style="font-size:0.7rem; color:#64748B; text-transform:uppercase; letter-spacing:0.08em; font-weight:600;">Signed in as</div>
-            <div style="font-weight:700; color:#F1F5F9; margin-top:2px;">{name}</div>
-            <div style="margin-top:6px;">
-                <span style="background:{colors['primary']}22; color:{colors['primary']}; padding:2px 10px;
-                             border-radius:99px; font-size:0.72rem; font-weight:700; text-transform:uppercase;
-                             letter-spacing:0.05em;">{role}</span>
+        <div style="
+            background: linear-gradient(145deg, #1E293B 0%, #162032 100%);
+            border: 1px solid rgba(99,102,241,0.22);
+            border-radius: 16px;
+            padding: 16px 16px 14px 16px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+        ">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="
+                    width:44px; height:44px; border-radius:50%;
+                    background: {colors['gradient']};
+                    display:flex; align-items:center; justify-content:center;
+                    font-size:1rem; font-weight:800; color:white;
+                    flex-shrink:0;
+                    box-shadow: 0 2px 10px {colors['primary']}55;
+                ">{initials}</div>
+                <div style="min-width:0;">
+                    <div style="font-size:0.68rem; color:#475569; text-transform:uppercase;
+                                letter-spacing:0.1em; font-weight:600; margin-bottom:2px;">Signed in as</div>
+                    <div style="font-weight:700; color:#F1F5F9; font-size:0.92rem;
+                                white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{name}</div>
+                </div>
+            </div>
+            <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(99,102,241,0.15);">
+                <span style="
+                    background: {colors['primary']}28;
+                    color: {colors['primary']};
+                    padding: 3px 12px;
+                    border-radius: 99px;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.07em;
+                    border: 1px solid {colors['primary']}40;
+                ">{role}</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1516,8 +1680,14 @@ def main():
             st.session_state.user_role = None
             st.session_state.user_display_name = None
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.button("🚪  Sign Out", on_click=sign_out)
+        st.markdown("""
+        <div style="
+            margin: 1.25rem 0 0.75rem;
+            border-top: 1px solid rgba(239,68,68,0.15);
+            padding-top: 0.75rem;
+        "></div>
+        """, unsafe_allow_html=True)
+        st.button("→  Sign Out", on_click=sign_out, use_container_width=True)
 
     if role == "provider":
         page_provider()
@@ -1537,7 +1707,7 @@ st.set_page_config(
     page_title="RxPrescribe – Prescription Delivery",
     page_icon="⚕️",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 init_session_state()
 

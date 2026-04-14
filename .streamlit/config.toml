@@ -1,0 +1,23 @@
+[global]
+
+[server]
+
+[browser]
+
+[ui]
+hideTopBar = false
+
+[theme]
+primaryColor = "#4F8EF7"
+backgroundColor = "#F0F4FA"
+secondaryBackgroundColor = "#1E2A3A"
+textColor = "#1A1A2E"
+font = "sans serif"
+
+[client]
+showSidebarNavigation = true
+
+[runner]
+
+[layout]
+initialSidebarState = "expanded"
