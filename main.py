@@ -513,6 +513,58 @@ def apply_custom_css():
         box-shadow: 0 0 0 3px rgba(14,165,233,0.12) !important;
     }
 
+    /* ── Inputs — target BaseUI to fix black fields ── */
+    [data-baseweb="input"] {
+        border-radius: 10px !important;
+        border: 1.5px solid #E2E8F0 !important;
+        background: white !important;
+        overflow: hidden;
+    }
+    [data-baseweb="input"]:focus-within {
+        border-color: #0EA5E9 !important;
+        box-shadow: 0 0 0 3px rgba(14,165,233,0.12) !important;
+    }
+    [data-baseweb="input"] input,
+    [data-baseweb="base-input"] input {
+        background: white !important;
+        color: #0F172A !important;
+        font-size: 0.9rem !important;
+        caret-color: #0EA5E9 !important;
+    }
+    [data-baseweb="base-input"] {
+        background: white !important;
+        color: #0F172A !important;
+    }
+    [data-baseweb="select"] > div {
+        border-radius: 10px !important;
+        border: 1.5px solid #E2E8F0 !important;
+        background: white !important;
+        color: #0F172A !important;
+    }
+    [data-baseweb="select"] > div:focus-within {
+        border-color: #0EA5E9 !important;
+        box-shadow: 0 0 0 3px rgba(14,165,233,0.12) !important;
+    }
+    [data-baseweb="select"] span { color: #0F172A !important; }
+    [data-baseweb="popover"] {
+        border-radius: 10px !important;
+        border: 1px solid #E2E8F0 !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important;
+    }
+    [data-baseweb="menu"] { background: white !important; }
+    [data-baseweb="menu"] li { color: #0F172A !important; }
+    [data-baseweb="menu"] li:hover { background: #F1F5F9 !important; }
+    [data-testid="stNumberInput"] input {
+        background: white !important;
+        color: #0F172A !important;
+    }
+    .stTextInput label, .stSelectbox label,
+    .stNumberInput label, .stTextArea label {
+        color: #374151 !important;
+        font-weight: 500 !important;
+        font-size: 0.875rem !important;
+    }
+
     /* ── Metrics ── */
     [data-testid="stMetric"] {
         background: white;

@@ -1,20 +1,5 @@
 [
   {
-    "role": "assistant",
-    "text": "Task completed: Demo credentials aren't readable. Fix that please",
-    "timestamp": "2026-04-14T00:47:20.684Z"
-  },
-  {
-    "role": "user",
-    "text": "Every time I click any button in the app, the screen flickers 2-3 times quickly",
-    "timestamp": "2026-04-14T19:35:59.189Z"
-  },
-  {
-    "role": "assistant",
-    "text": "Task completed: Every time I click any button in the app, the screen flickers 2-3 times quickly",
-    "timestamp": "2026-04-14T19:46:31.584Z"
-  },
-  {
     "role": "user",
     "text": "The flickering is still happening on all pages all across the app",
     "timestamp": "2026-04-14T19:50:43.807Z"
@@ -48,5 +33,20 @@
     "role": "user",
     "text": "The blinking of app upon clicking any button across such as Send Prescription, save address, find pharmacy using AI, etc is still happening. Fix that properly this time",
     "timestamp": "2026-04-15T17:50:54.837Z"
+  },
+  {
+    "role": "assistant",
+    "text": "Task completed: The blinking of app upon clicking any button across such as Send Prescription, save address, find pharmacy using AI, etc is still happening. Fix that properly this time",
+    "timestamp": "2026-04-15T18:01:44.366Z"
+  },
+  {
+    "role": "user",
+    "text": "This pr has conflicts",
+    "timestamp": "2026-04-15T18:21:00.101Z"
+  },
+  {
+    "role": "user",
+    "text": "This pr has conflicts",
+    "timestamp": "2026-04-15T18:29:08.352Z"
   }
 ]
