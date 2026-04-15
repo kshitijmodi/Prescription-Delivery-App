@@ -306,7 +306,7 @@ ROLE_COLORS = {
 
 def apply_custom_css():
     st.html("""
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
 
     /* ── Global ── */
@@ -323,62 +323,160 @@ def apply_custom_css():
         max-width: 1200px;
         background: #F8FAFC;
     }
-    [data-testid="stAppViewContainer"] {
-        background: #F8FAFC !important;
-    }
+    [data-testid="stAppViewContainer"] { background: #F8FAFC !important; }
 
     /* ── Sidebar ── */
     [data-testid="stSidebar"] {
-        background: #0F172A !important;
-        border-right: 1px solid #1E293B !important;
+        background: linear-gradient(180deg, #0D1B2A 0%, #112240 45%, #0D1B2A 100%) !important;
+        border-right: 1px solid rgba(99,102,241,0.25) !important;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.35) !important;
+    }
+    [data-testid="stSidebar"] > div:first-child {
+        padding-top: 1.25rem !important;
     }
     [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] div:not([data-baseweb]) {
-        color: #CBD5E1 !important;
+    [data-testid="stSidebar"] span:not([data-baseweb]),
+    [data-testid="stSidebar"] label {
+        color: #B8C6D9 !important;
     }
-    [data-testid="stSidebar"] strong,
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3 {
-        color: #F1F5F9 !important;
+    [data-testid="stSidebar"] .stMarkdown h1,
+    [data-testid="stSidebar"] .stMarkdown h2,
+    [data-testid="stSidebar"] .stMarkdown h3,
+    [data-testid="stSidebar"] .stMarkdown strong {
+        color: #E2E8F0 !important;
+        letter-spacing: 0.01em !important;
     }
     [data-testid="stSidebar"] hr {
-        border-color: #1E293B !important;
-    }
-    [data-testid="stSidebar"] .stButton > button {
-        background: #1E293B !important;
-        color: #F1F5F9 !important;
-        border: 1px solid #334155 !important;
-        border-radius: 10px !important;
-        font-weight: 500 !important;
-        width: 100% !important;
-        box-shadow: none !important;
-    }
-    [data-testid="stSidebar"] .stButton > button:hover {
-        background: #EF4444 !important;
-        border-color: #EF4444 !important;
-        color: white !important;
-        box-shadow: 0 2px 8px rgba(239,68,68,0.3) !important;
+        border-color: rgba(99,102,241,0.2) !important;
+        margin: 0.75rem 0 !important;
     }
 
-    /* ── Buttons — NO transform (prevents blink) ── */
+    /* Sidebar radio nav items */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 10px !important;
+        margin-bottom: 2px !important;
+        transition: background 0.2s ease, color 0.2s ease !important;
+        cursor: pointer !important;
+        font-weight: 500 !important;
+        font-size: 0.875rem !important;
+        color: #94A3B8 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+        background: rgba(99,102,241,0.12) !important;
+        color: #E2E8F0 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] [aria-checked="true"] + div,
+    [data-testid="stSidebar"] [data-testid="stRadio"] input:checked ~ div {
+        color: #818CF8 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Sidebar selectbox */
+    [data-testid="stSidebar"] .stSelectbox > div > div {
+        background: rgba(30,41,59,0.7) !important;
+        border: 1px solid rgba(99,102,241,0.3) !important;
+        border-radius: 10px !important;
+        color: #CBD5E1 !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox > div > div:hover {
+        border-color: rgba(99,102,241,0.6) !important;
+    }
+
+    /* Sidebar text inputs */
+    [data-testid="stSidebar"] .stTextInput > div > div > input {
+        background: rgba(30,41,59,0.7) !important;
+        border: 1px solid rgba(99,102,241,0.3) !important;
+        border-radius: 10px !important;
+        color: #E2E8F0 !important;
+    }
+    [data-testid="stSidebar"] .stTextInput > div > div > input:focus {
+        border-color: #6366F1 !important;
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.15) !important;
+    }
+
+    /* Sidebar section labels */
+    [data-testid="stSidebar"] .stMarkdown p {
+        color: #94A3B8 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Sidebar caption / small text */
+    [data-testid="stSidebar"] small,
+    [data-testid="stSidebar"] .stCaption {
+        color: #64748B !important;
+        font-size: 0.78rem !important;
+    }
+
+    /* ── Sign-out button (sidebar) ── */
+    [data-testid="stSidebar"] .stButton > button {
+        background: linear-gradient(135deg, rgba(239,68,68,0.07) 0%, rgba(220,38,38,0.11) 100%) !important;
+        color: #FCA5A5 !important;
+        border: 1px solid rgba(239,68,68,0.28) !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        letter-spacing: 0.03em !important;
+        padding: 0.6rem 1rem !important;
+        transition: all 0.25s ease !important;
+        width: 100% !important;
+        box-shadow: 0 1px 6px rgba(239,68,68,0.10), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+        text-align: center !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    [data-testid="stSidebar"] .stButton > button::before {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background: linear-gradient(135deg, rgba(239,68,68,0.0) 0%, rgba(239,68,68,0.06) 100%) !important;
+        opacity: 0 !important;
+        transition: opacity 0.25s ease !important;
+        border-radius: inherit !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background: linear-gradient(135deg, rgba(239,68,68,0.18) 0%, rgba(220,38,38,0.26) 100%) !important;
+        border-color: rgba(239,68,68,0.55) !important;
+        color: #FECACA !important;
+        box-shadow: 0 4px 16px rgba(239,68,68,0.25) !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover::before {
+        opacity: 1 !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:active {
+        box-shadow: 0 1px 6px rgba(239,68,68,0.15) !important;
+    }
+
+    /* Sidebar accent divider line at top */
+    [data-testid="stSidebar"]::before {
+        content: "" !important;
+        display: block !important;
+        height: 3px !important;
+        background: linear-gradient(90deg, #6366F1, #0EA5E9, #10B981) !important;
+        border-radius: 0 0 3px 3px !important;
+        position: sticky !important;
+        top: 0 !important;
+    }
+
+    /* ── Buttons — NO transform (prevents Streamlit blink) ── */
     .stButton > button {
         border-radius: 10px !important;
         font-weight: 600 !important;
         font-size: 0.875rem !important;
         padding: 0.5rem 1.25rem !important;
+        transition: box-shadow 0.15s ease, opacity 0.15s ease !important;
         border: none !important;
         background: linear-gradient(135deg, #0EA5E9, #6366F1) !important;
         color: white !important;
         box-shadow: 0 2px 8px rgba(14,165,233,0.25) !important;
         width: 100%;
-        transition: box-shadow 0.15s ease, opacity 0.15s ease !important;
     }
     .stButton > button:hover {
         box-shadow: 0 4px 16px rgba(14,165,233,0.4) !important;
-        opacity: 0.92 !important;
+        opacity: 0.90 !important;
     }
 
     /* ── Form submit buttons ── */
@@ -389,16 +487,16 @@ def apply_custom_css():
         color: white !important;
         border: none !important;
         padding: 0.6rem 1.5rem !important;
+        transition: box-shadow 0.15s ease, opacity 0.15s ease !important;
         box-shadow: 0 2px 10px rgba(16,185,129,0.3) !important;
         width: 100% !important;
-        transition: box-shadow 0.15s ease, opacity 0.15s ease !important;
     }
     .stFormSubmitButton > button:hover {
         box-shadow: 0 4px 16px rgba(16,185,129,0.4) !important;
-        opacity: 0.92 !important;
+        opacity: 0.90 !important;
     }
 
-    /* ── Inputs — target BaseUI components ── */
+    /* ── Inputs — target BaseUI to fix black fields ── */
     [data-baseweb="input"] {
         border-radius: 10px !important;
         border: 1.5px solid #E2E8F0 !important;
@@ -409,7 +507,8 @@ def apply_custom_css():
         border-color: #0EA5E9 !important;
         box-shadow: 0 0 0 3px rgba(14,165,233,0.12) !important;
     }
-    [data-baseweb="input"] input {
+    [data-baseweb="input"] input,
+    [data-baseweb="base-input"] input {
         background: white !important;
         color: #0F172A !important;
         font-size: 0.9rem !important;
@@ -429,27 +528,18 @@ def apply_custom_css():
         border-color: #0EA5E9 !important;
         box-shadow: 0 0 0 3px rgba(14,165,233,0.12) !important;
     }
-    [data-baseweb="select"] span {
-        color: #0F172A !important;
-    }
+    [data-baseweb="select"] span { color: #0F172A !important; }
     [data-baseweb="popover"] {
         border-radius: 10px !important;
         border: 1px solid #E2E8F0 !important;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10) !important;
     }
-    [data-baseweb="menu"] {
-        background: white !important;
-    }
-    [data-baseweb="menu"] li {
-        color: #0F172A !important;
-    }
-    [data-baseweb="menu"] li:hover {
-        background: #F1F5F9 !important;
-    }
+    [data-baseweb="menu"] { background: white !important; }
+    [data-baseweb="menu"] li { color: #0F172A !important; }
+    [data-baseweb="menu"] li:hover { background: #F1F5F9 !important; }
     [data-testid="stNumberInput"] input {
         background: white !important;
         color: #0F172A !important;
-        border-radius: 10px !important;
     }
     .stTextInput label, .stSelectbox label,
     .stNumberInput label, .stTextArea label {
@@ -460,11 +550,15 @@ def apply_custom_css():
 
     /* ── Metrics ── */
     [data-testid="stMetric"] {
-        background: white !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 14px !important;
-        padding: 1rem 1.25rem !important;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04) !important;
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        transition: box-shadow 0.2s ease;
+    }
+    [data-testid="stMetric"]:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
     [data-testid="stMetricLabel"] {
         font-size: 0.78rem !important;
@@ -481,10 +575,10 @@ def apply_custom_css():
 
     /* ── Tabs ── */
     .stTabs [data-baseweb="tab-list"] {
-        background: #F1F5F9 !important;
-        border-radius: 12px !important;
-        padding: 4px !important;
-        gap: 2px !important;
+        background: #F1F5F9;
+        border-radius: 12px;
+        padding: 4px;
+        gap: 2px;
         border: none !important;
     }
     .stTabs [data-baseweb="tab"] {
@@ -493,7 +587,7 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         color: #64748B !important;
         padding: 0.5rem 1rem !important;
-        background: transparent !important;
+        transition: all 0.2s ease !important;
     }
     .stTabs [aria-selected="true"] {
         background: white !important;
@@ -510,14 +604,15 @@ def apply_custom_css():
         overflow: hidden !important;
         background: white !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+        transition: box-shadow 0.2s ease !important;
+    }
+    [data-testid="stExpander"]:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
     }
     [data-testid="stExpander"] summary {
         font-weight: 600 !important;
         color: #1E293B !important;
         padding: 0.75rem 1rem !important;
-    }
-    [data-testid="stExpander"] summary:hover {
-        background: #F8FAFC !important;
     }
 
     /* ── Progress bar ── */
@@ -528,11 +623,13 @@ def apply_custom_css():
     .stProgress > div > div > div {
         border-radius: 99px !important;
         background: linear-gradient(90deg, #0EA5E9, #6366F1) !important;
+        transition: width 0.5s ease !important;
     }
 
     /* ── Alerts ── */
     [data-testid="stAlert"] {
         border-radius: 12px !important;
+        border: none !important;
         font-weight: 500 !important;
     }
 
@@ -553,8 +650,42 @@ def apply_custom_css():
         align-items: center;
         gap: 1rem;
     }
-    .page-header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; color: white !important; }
-    .page-header p  { margin: 0; opacity: 0.85; font-size: 0.9rem; color: white !important; }
+    .page-header h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: white !important;
+    }
+    .page-header p {
+        margin: 0;
+        opacity: 0.85;
+        font-size: 0.9rem;
+    }
+
+    /* ── Stat badge ── */
+    .stat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 99px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    /* ── Rx card ── */
+    .rx-card {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        transition: box-shadow 0.2s ease;
+    }
+    .rx-card:hover {
+        box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    }
 
     /* ── Status pill ── */
     .status-pill {
@@ -566,53 +697,117 @@ def apply_custom_css():
         letter-spacing: 0.04em;
         text-transform: uppercase;
     }
-    .status-pending          { background: #FEF3C7; color: #92400E; }
-    .status-assigned         { background: #FED7AA; color: #9A3412; }
-    .status-filling          { background: #DBEAFE; color: #1E40AF; }
-    .status-ready            { background: #D1FAE5; color: #065F46; }
+    .status-pending        { background: #FEF3C7; color: #92400E; }
+    .status-assigned       { background: #FED7AA; color: #9A3412; }
+    .status-filling        { background: #DBEAFE; color: #1E40AF; }
+    .status-ready          { background: #D1FAE5; color: #065F46; }
     .status-out_for_delivery { background: #E0E7FF; color: #3730A3; }
-    .status-delivered        { background: #DCFCE7; color: #14532D; }
+    .status-delivered      { background: #DCFCE7; color: #14532D; }
 
     /* ── Milestone step ── */
     .milestone-step {
-        display: flex; align-items: center; gap: 10px;
-        padding: 8px 12px; border-radius: 10px;
-        margin-bottom: 6px; font-size: 0.875rem; font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
     }
-    .milestone-done    { background: #D1FAE5; color: #065F46; }
+    .milestone-done   { background: #D1FAE5; color: #065F46; }
     .milestone-pending { background: #F1F5F9; color: #94A3B8; }
 
     /* ── Activity feed ── */
     .activity-entry {
-        padding: 8px 12px; border-radius: 8px;
-        background: #F8FAFC; border-left: 3px solid #0EA5E9;
-        margin-bottom: 6px; font-size: 0.8rem; color: #334155;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: #F8FAFC;
+        border-left: 3px solid #0EA5E9;
+        margin-bottom: 6px;
+        font-size: 0.8rem;
+        font-family: 'Inter', monospace;
+        color: #334155;
     }
 
     /* ── Login page ── */
-    .login-hero { text-align: center; padding: 3rem 0 2rem 0; }
+    .login-hero {
+        text-align: center;
+        padding: 3rem 0 2rem 0;
+    }
+    .login-logo {
+        font-size: 3.5rem;
+        margin-bottom: 0.5rem;
+        animation: pulse 2s infinite;
+    }
     @keyframes pulse {
         0%, 100% { transform: scale(1); }
-        50%       { transform: scale(1.06); }
+        50% { transform: scale(1.06); }
     }
     .login-title {
-        font-size: 2rem; font-weight: 800;
-        background: linear-gradient(135deg, #0EA5E9, #6366F1);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        background-clip: text; margin: 0;
+        font-size: 2.6rem;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #0EA5E9 0%, #6366F1 55%, #8B5CF6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+        line-height: 1.1;
     }
-    .login-subtitle { color: #64748B; font-size: 1rem; margin-top: 0.4rem; }
+    .login-subtitle {
+        color: #64748B;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        letter-spacing: 0.02em;
+        font-weight: 400;
+    }
+    .login-card {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 20px;
+        padding: 2rem 2rem 1.5rem;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
 
-    /* ── Rec cards ── */
+    /* ── Pharmacy rec card ── */
     .rec-card {
         background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
-        border: 1.5px solid #6EE7B7; border-radius: 14px; padding: 1rem 1.25rem; margin: 0.75rem 0;
+        border: 1.5px solid #6EE7B7;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        margin: 0.75rem 0;
     }
-    .rec-card-title   { font-size: 1.1rem; font-weight: 700; color: #065F46; margin-bottom: 2px; }
-    .rec-card-address { font-size: 0.85rem; color: #047857; }
+    .rec-card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #065F46;
+        margin-bottom: 2px;
+    }
+    .rec-card-address {
+        font-size: 0.85rem;
+        color: #047857;
+    }
+
+    /* ── AI reasoning list ── */
+    .reasoning-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 6px 0;
+        font-size: 0.875rem;
+        color: #334155;
+        border-bottom: 1px solid #F1F5F9;
+    }
+    .reasoning-item:last-child { border-bottom: none; }
+
+    /* ── Driver card ── */
     .driver-rec-card {
         background: linear-gradient(135deg, #EFF6FF, #EDE9FE);
-        border: 1.5px solid #93C5FD; border-radius: 14px; padding: 1rem 1.25rem; margin: 0.75rem 0;
+        border: 1.5px solid #93C5FD;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        margin: 0.75rem 0;
     }
 
     /* ── Scrollbar ── */
@@ -620,6 +815,31 @@ def apply_custom_css():
     ::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 99px; }
     ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
     ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* ── Sidebar brand / app title ── */
+    .sidebar-brand {
+        text-align: center;
+        padding: 0.5rem 0 1.25rem 0;
+    }
+    .sidebar-brand-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #93C5FD 0%, #818CF8 55%, #A78BFA 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-top: 6px;
+        line-height: 1.2;
+    }
+    .sidebar-brand-subtitle {
+        font-size: 0.68rem;
+        color: #475569 !important;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-top: 3px;
+        font-weight: 500;
+    }
 
     /* ── Spinner ── */
     [data-testid="stSpinner"] > div {
@@ -702,21 +922,51 @@ def login_page():
         st.markdown("<br>", unsafe_allow_html=True)
         with st.expander("🔑 View Demo Credentials"):
             st.markdown("""
-| Role | Username | Password |
-|------|----------|----------|
-| 👨‍⚕️ Provider | `provider` | `rx2024` |
-| 👤 Patient – John Doe | `john_doe` | `pass123` |
-| 👤 Patient – Sarah Smith | `sarah_smith` | `pass123` |
-| 👤 Patient – Michael Chen | `michael_chen` | `pass123` |
-| 👤 Patient – Emily Davis | `emily_davis` | `pass123` |
-| 👤 Patient – Robert Jones | `robert_jones` | `pass123` |
-| 🏪 Pharmacy 1 | `pharmacy1` | `pharma1` |
-| 🏪 Pharmacy 2 | `pharmacy2` | `pharma2` |
-| 🚗 Driver – Mike Johnson | `mike_j` | `drive1` |
-| 🚗 Driver – Linda Chen | `linda_c` | `drive1` |
-| 🚗 Driver – David Kim | `david_k` | `drive1` |
-| 📊 Admin | `admin` | `admin1` |
-""")
+<style>
+[data-testid="stExpander"] .stDataFrame {
+    font-size: 15px !important;
+    color: #111111 !important;
+}
+[data-testid="stExpander"] .stDataFrame td,
+[data-testid="stExpander"] .stDataFrame th {
+    font-size: 15px !important;
+    color: #111111 !important;
+    font-weight: 500;
+}
+[data-testid="stExpander"] .stDataFrame th {
+    font-weight: 700 !important;
+    background-color: #f0f2f6 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+            import pandas as pd
+            credentials_data = {
+                "Role": [
+                    "👨‍⚕️ Provider",
+                    "👤 Patient – John Doe",
+                    "👤 Patient – Sarah Smith",
+                    "👤 Patient – Michael Chen",
+                    "👤 Patient – Emily Davis",
+                    "👤 Patient – Robert Jones",
+                    "🏪 Pharmacy 1",
+                    "🏪 Pharmacy 2",
+                    "🚗 Driver – Mike Johnson",
+                    "🚗 Driver – Linda Chen",
+                    "🚗 Driver – David Kim",
+                    "📊 Admin",
+                ],
+                "Username": [
+                    "provider", "john_doe", "sarah_smith", "michael_chen",
+                    "emily_davis", "robert_jones", "pharmacy1", "pharmacy2",
+                    "mike_j", "linda_c", "david_k", "admin",
+                ],
+                "Password": [
+                    "rx2024", "pass123", "pass123", "pass123",
+                    "pass123", "pass123", "pharma1", "pharma2",
+                    "drive1", "drive1", "drive1", "admin1",
+                ],
+            }
+            st.dataframe(pd.DataFrame(credentials_data), use_container_width=True, hide_index=True)
 
 
 # =====================================================
@@ -852,7 +1102,6 @@ def page_patient():
                                 rx['location'] = full_address
                                 rx.pop('pharmacy_recommendations', None)
                                 add_activity(f"{patient_name} set address for {rx['id']}")
-                                st.rerun()
                             else:
                                 st.error("All fields are required.")
                 else:
@@ -864,7 +1113,6 @@ def page_patient():
                     """, unsafe_allow_html=True)
                     if col_edit.button("✏️ Edit", key=f"edit_addr_{rx['id']}"):
                         rx['_editing_address'] = True
-                        st.rerun()
 
                     if rx.get('_editing_address'):
                         with st.form(f"edit_addr_form_{rx['id']}"):
@@ -882,17 +1130,15 @@ def page_patient():
                                     rx['location'] = f"{street}, {city}, {state} {zipcode}"
                                     rx.pop('_editing_address', None)
                                     rx.pop('pharmacy_recommendations', None)
-                                    st.rerun()
                             if sc2.form_submit_button("✖ Cancel"):
                                 rx.pop('_editing_address', None)
-                                st.rerun()
 
                     # ── PHARMACY SEARCH ────────────────────────────
                     if rx['location'] and not rx.get('pharmacy_confirmed'):
                         if not maps_key or not groq_key:
                             st.error("⚠️ API keys are not configured. An admin must add GOOGLE_MAPS_API_KEY and GROQ_API_KEY as environment secrets in the HF Space settings.")
-                        elif st.button(f"🤖 Find Nearby Pharmacies with AI", key=f"find_ph_{rx['id']}"):
-                            if True:
+                        else:
+                            if st.button(f"🤖 Find Nearby Pharmacies with AI", key=f"find_ph_{rx['id']}"):
                                 with st.status("Analyzing pharmacies...", expanded=True) as status:
                                     st.write("🔍 Searching nearby pharmacies...")
                                     maps = GoogleMapsAPI(maps_key)
@@ -907,7 +1153,6 @@ def page_patient():
                                         }
                                         st.write("✅ Analysis complete!")
                                         status.update(label="Done!", state="complete")
-                                        st.rerun()
 
                         if rx.get('pharmacy_recommendations'):
                             data = rx['pharmacy_recommendations']
@@ -956,7 +1201,6 @@ def page_patient():
                                         pharmacy_confirmed=True
                                     )
                                     add_activity(f"{patient_name} scheduled {rx['id']} → {rec_ph['name']}")
-                                    st.rerun()
 
             # ── IN-TRANSIT TRACKING ────────────────────────────────
             elif rx['status'] in ['assigned', 'filling', 'ready', 'out_for_delivery']:
@@ -1071,8 +1315,6 @@ def page_pharmacy():
                 if rx.get('instructions'):
                     st.info(f"📝 {rx['instructions']}")
                 if st.button(f"✅ Accept Order", key=f"accept_{rx['id']}"):
-                    with st.spinner("Verifying insurance..."):
-                        time.sleep(0.8)
                     update_prescription_status(rx['id'], 'filling')
                     st.rerun()
 
@@ -1128,7 +1370,6 @@ def page_pharmacy():
                                 rx.get('delivery_time', 'standard')
                             )
                             rx['driver_recommendation'] = rec
-                        st.rerun()
 
                 if rx.get('driver_recommendation'):
                     rec = rx['driver_recommendation']
@@ -1155,13 +1396,13 @@ def page_pharmacy():
                             st.write(f"**{opt.get('name','')}** — Score: {opt.get('score','N/A')} — {opt.get('summary','')}")
 
                         if st.button(f"🚗 Assign to {rec_drv['name']}", key=f"assign_{rx['id']}"):
-                            eta = f"~{rec.get('estimated_delivery_minutes', 30)} min"
+                            eta_val = f"~{rec.get('estimated_delivery_minutes', 30)} min"
                             for r in ready:
                                 update_prescription_status(
                                     r['id'], 'out_for_delivery',
                                     driver_id=rec_id,
                                     driver_name=rec_drv['name'],
-                                    estimated_delivery_time=eta
+                                    estimated_delivery_time=eta_val
                                 )
                             for d in st.session_state.drivers:
                                 if d['id'] == rec_id:
@@ -1379,14 +1620,7 @@ def page_admin():
 # =====================================================
 
 def main():
-    st.set_page_config(
-        page_title="RxPrescribe – Prescription Delivery",
-        page_icon="⚕️",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
     apply_custom_css()
-    init_session_state()
 
     if not st.session_state.logged_in:
         login_page()
@@ -1398,31 +1632,63 @@ def main():
 
     with st.sidebar:
         st.markdown(f"""
-        <div style="padding: 0.5rem 0 1rem 0;">
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:4px;">
-                <rect width="36" height="36" rx="10" fill="url(#sidebarGrad)"/>
-                <defs>
-                    <linearGradient id="sidebarGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#0EA5E9"/>
-                        <stop offset="100%" stop-color="#6366F1"/>
-                    </linearGradient>
-                </defs>
-                <rect x="16" y="7" width="4" height="22" rx="2" fill="white"/>
-                <rect x="7" y="16" width="22" height="4" rx="2" fill="white"/>
-            </svg>
-            <div style="font-size:1.1rem; font-weight:700; color:#F1F5F9;">RxPrescribe</div>
-            <div style="font-size:0.75rem; color:#64748B; margin-top:2px;">Prescription Platform</div>
+        <div class="sidebar-brand">
+            <div style="display:flex; justify-content:center; margin-bottom:4px;">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="48" height="48" rx="14" fill="url(#sidebarGrad)"/>
+                    <defs>
+                        <linearGradient id="sidebarGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#0EA5E9"/>
+                            <stop offset="100%" stop-color="#6366F1"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="22" y="10" width="4" height="28" rx="2" fill="white"/>
+                    <rect x="10" y="22" width="28" height="4" rx="2" fill="white"/>
+                </svg>
+            </div>
+            <div class="sidebar-brand-title">RxPrescribe</div>
+            <div class="sidebar-brand-subtitle">Prescription Platform</div>
         </div>
         """, unsafe_allow_html=True)
 
+        initials = "".join(w[0].upper() for w in name.split()[:2])
         st.markdown(f"""
-        <div style="background:#1E293B; border-radius:12px; padding:12px 14px; margin-bottom:1rem;">
-            <div style="font-size:0.7rem; color:#64748B; text-transform:uppercase; letter-spacing:0.08em; font-weight:600;">Signed in as</div>
-            <div style="font-weight:700; color:#F1F5F9; margin-top:2px;">{name}</div>
-            <div style="margin-top:6px;">
-                <span style="background:{colors['primary']}22; color:{colors['primary']}; padding:2px 10px;
-                             border-radius:99px; font-size:0.72rem; font-weight:700; text-transform:uppercase;
-                             letter-spacing:0.05em;">{role}</span>
+        <div style="
+            background: linear-gradient(145deg, #1E293B 0%, #162032 100%);
+            border: 1px solid rgba(99,102,241,0.22);
+            border-radius: 16px;
+            padding: 16px 16px 14px 16px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+        ">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="
+                    width:44px; height:44px; border-radius:50%;
+                    background: {colors['gradient']};
+                    display:flex; align-items:center; justify-content:center;
+                    font-size:1rem; font-weight:800; color:white;
+                    flex-shrink:0;
+                    box-shadow: 0 2px 10px {colors['primary']}55;
+                ">{initials}</div>
+                <div style="min-width:0;">
+                    <div style="font-size:0.68rem; color:#475569; text-transform:uppercase;
+                                letter-spacing:0.1em; font-weight:600; margin-bottom:2px;">Signed in as</div>
+                    <div style="font-weight:700; color:#F1F5F9; font-size:0.92rem;
+                                white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{name}</div>
+                </div>
+            </div>
+            <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(99,102,241,0.15);">
+                <span style="
+                    background: {colors['primary']}28;
+                    color: {colors['primary']};
+                    padding: 3px 12px;
+                    border-radius: 99px;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.07em;
+                    border: 1px solid {colors['primary']}40;
+                ">{role}</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1442,13 +1708,20 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🚪  Sign Out"):
+        def sign_out():
             st.session_state.logged_in = False
             st.session_state.username = None
             st.session_state.user_role = None
             st.session_state.user_display_name = None
-            st.rerun()
+
+        st.markdown("""
+        <div style="
+            margin: 1.25rem 0 0.75rem;
+            border-top: 1px solid rgba(239,68,68,0.15);
+            padding-top: 0.75rem;
+        "></div>
+        """, unsafe_allow_html=True)
+        st.button("→  Sign Out", on_click=sign_out, use_container_width=True)
 
     if role == "provider":
         page_provider()
@@ -1463,6 +1736,14 @@ def main():
     else:
         st.error("Unknown role. Please sign out and try again.")
 
+
+st.set_page_config(
+    page_title="RxPrescribe – Prescription Delivery",
+    page_icon="⚕️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+init_session_state()
 
 if __name__ == "__main__":
     main()
