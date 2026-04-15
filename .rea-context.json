@@ -1,20 +1,5 @@
 [
   {
-    "role": "assistant",
-    "text": "Task completed: The left nav should be expanded by default, and stylish with good colors for background and other components. User profile should be modern and stylish. Sign out button should match modern standards. Title of app and log should be center aligned and be elegant font color and style",
-    "timestamp": "2026-04-14T20:23:06.382Z"
-  },
-  {
-    "role": "user",
-    "text": "Fix ui issues",
-    "timestamp": "2026-04-15T04:28:16.734Z"
-  },
-  {
-    "role": "assistant",
-    "text": "Task completed: Fix ui issues",
-    "timestamp": "2026-04-15T04:36:25.534Z"
-  },
-  {
     "role": "user",
     "text": "The blinking of app upon clicking any button across such as Send Prescription, save address, find pharmacy using AI, etc is still happening. Fix that properly this time",
     "timestamp": "2026-04-15T17:50:54.837Z"
@@ -48,5 +33,20 @@
     "role": "assistant",
     "text": "Task completed: Unresolved merge conflict: The git status shows UU main.py (unmerged/conflicted state), suggesting this diff is from an incomplete merge. The CSS changes may not address the actual conflict markers in the file.",
     "timestamp": "2026-04-15T18:43:59.266Z"
+  },
+  {
+    "role": "user",
+    "text": "1. In pharmacy account, after clicking AI button, there is overlap between the word Done and the word Check\n2. All expandable buttons across the app have the blinking issue",
+    "timestamp": "2026-04-15T20:38:03.066Z"
+  },
+  {
+    "role": "user",
+    "text": "1. In patient account, after clicking AI button, there is overlap between the word Done and the word Check\n2. Also in patient account, the button save address needs to be clicked twice to be able to save the address\n2. All expandable buttons across the app have the blinking issue",
+    "timestamp": "2026-04-15T20:39:47.011Z"
+  },
+  {
+    "role": "user",
+    "text": "1. In patient account, after clicking AI button, there is overlap between the word Done and the word Check\n2. Also in patient account, the button save address needs to be clicked twice to be able to save the address\n2. All expandable buttons across the app have the blinking issue",
+    "timestamp": "2026-04-15T20:50:35.721Z"
   }
 ]

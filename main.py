@@ -352,7 +352,6 @@ def apply_custom_css():
         padding: 0.5rem 0.75rem !important;
         border-radius: 10px !important;
         margin-bottom: 2px !important;
-        transition: background 0.2s ease, color 0.2s ease !important;
         cursor: pointer !important;
         font-weight: 500 !important;
         font-size: 0.875rem !important;
@@ -415,7 +414,6 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         letter-spacing: 0.03em !important;
         padding: 0.6rem 1rem !important;
-        transition: all 0.25s ease !important;
         width: 100% !important;
         box-shadow: 0 1px 6px rgba(239,68,68,0.10), inset 0 1px 0 rgba(255,255,255,0.04) !important;
         text-align: center !important;
@@ -428,7 +426,6 @@ def apply_custom_css():
         inset: 0 !important;
         background: linear-gradient(135deg, rgba(239,68,68,0.0) 0%, rgba(239,68,68,0.06) 100%) !important;
         opacity: 0 !important;
-        transition: opacity 0.25s ease !important;
         border-radius: inherit !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
@@ -463,7 +460,6 @@ def apply_custom_css():
         font-weight: 600 !important;
         font-size: 0.875rem !important;
         padding: 0.5rem 1.25rem !important;
-        transition: all 0.2s ease !important;
         border: none !important;
         background: linear-gradient(135deg, #0EA5E9, #6366F1) !important;
         color: white !important;
@@ -487,7 +483,6 @@ def apply_custom_css():
         color: white !important;
         border: none !important;
         padding: 0.6rem 1.5rem !important;
-        transition: all 0.2s ease !important;
         box-shadow: 0 2px 10px rgba(16,185,129,0.3) !important;
         width: 100% !important;
     }
@@ -504,7 +499,6 @@ def apply_custom_css():
         border: 1.5px solid #E2E8F0 !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 0.9rem !important;
-        transition: border-color 0.2s ease !important;
         background: #FAFAFA !important;
     }
     .stTextInput > div > div > input:focus,
@@ -572,7 +566,6 @@ def apply_custom_css():
         border-radius: 14px;
         padding: 1rem 1.25rem;
         box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        transition: box-shadow 0.2s ease;
     }
     [data-testid="stMetric"]:hover {
         box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -604,7 +597,6 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         color: #64748B !important;
         padding: 0.5rem 1rem !important;
-        transition: all 0.2s ease !important;
     }
     .stTabs [aria-selected="true"] {
         background: white !important;
@@ -621,11 +613,8 @@ def apply_custom_css():
         overflow: hidden !important;
         background: white !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
-        transition: box-shadow 0.2s ease !important;
     }
-    [data-testid="stExpander"]:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
-    }
+
     [data-testid="stExpander"] summary {
         font-weight: 600 !important;
         color: #1E293B !important;
@@ -640,7 +629,6 @@ def apply_custom_css():
     .stProgress > div > div > div {
         border-radius: 99px !important;
         background: linear-gradient(90deg, #0EA5E9, #6366F1) !important;
-        transition: width 0.5s ease !important;
     }
 
     /* ── Alerts ── */
@@ -648,6 +636,50 @@ def apply_custom_css():
         border-radius: 12px !important;
         border: none !important;
         font-weight: 500 !important;
+    }
+
+    /* ── st.status() overlap fix ── */
+    [data-testid="stStatusWidget"] {
+        min-width: 0 !important;
+        overflow: hidden !important;
+    }
+    [data-testid="stStatusWidget"] > div {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        flex-wrap: nowrap !important;
+        min-width: 0 !important;
+    }
+    [data-testid="stStatusWidget"] label {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        min-width: 0 !important;
+        flex-shrink: 1 !important;
+    }
+    [data-testid="stStatusWidget"] .stSpinner,
+    [data-testid="stStatusWidget"] svg {
+        flex-shrink: 0 !important;
+    }
+    @media (max-width: 768px) {
+        [data-testid="stStatusWidget"] label {
+            font-size: 0.85rem !important;
+            max-width: 120px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        [data-testid="stStatusWidget"] label {
+            font-size: 0.78rem !important;
+            max-width: 80px !important;
+        }
+        [data-testid="stStatusWidget"] > div {
+            gap: 0.25rem !important;
+        }
+    }
+    @media (min-width: 769px) {
+        [data-testid="stStatusWidget"] label {
+            max-width: 200px !important;
+        }
     }
 
     /* ── Divider ── */
@@ -698,7 +730,6 @@ def apply_custom_css():
         padding: 1.25rem 1.5rem;
         margin-bottom: 1rem;
         box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        transition: box-shadow 0.2s ease;
     }
     .rx-card:hover {
         box-shadow: 0 6px 24px rgba(0,0,0,0.08);
@@ -1119,6 +1150,7 @@ def page_patient():
                                 rx['location'] = full_address
                                 rx.pop('pharmacy_recommendations', None)
                                 add_activity(f"{patient_name} set address for {rx['id']}")
+                                st.rerun()
                             else:
                                 st.error("All fields are required.")
                 else:
@@ -1146,7 +1178,9 @@ def page_patient():
                                 if all([street, city, state, zipcode]):
                                     rx['location'] = f"{street}, {city}, {state} {zipcode}"
                                     rx.pop('_editing_address', None)
-                                    rx.pop('pharmacy_recommendations', None)
+                                    if 'pharmacy_recommendations' in rx:
+                                        rx.pop('pharmacy_recommendations', None)
+                                    st.rerun()
                             if sc2.form_submit_button("✖ Cancel"):
                                 rx.pop('_editing_address', None)
 
