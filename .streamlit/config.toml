@@ -8,10 +8,10 @@
 hideTopBar = false
 
 [theme]
-primaryColor = "#4F8EF7"
-backgroundColor = "#F0F4FA"
-secondaryBackgroundColor = "#1E2A3A"
-textColor = "#1A1A2E"
+primaryColor = "#6366F1"
+backgroundColor = "#F8FAFC"
+secondaryBackgroundColor = "#0D1B2A"
+textColor = "#0F172A"
 font = "sans serif"
 
 [client]

@@ -1076,7 +1076,6 @@ def page_patient():
                     """, unsafe_allow_html=True)
                     if col_edit.button("✏️ Edit", key=f"edit_addr_{rx['id']}"):
                         rx['_editing_address'] = True
-                        st.rerun()
 
                     if rx.get('_editing_address'):
                         with st.form(f"edit_addr_form_{rx['id']}"):
@@ -1117,7 +1116,6 @@ def page_patient():
                                         }
                                         st.write("✅ Analysis complete!")
                                         status.update(label="Done!", state="complete")
-                                st.rerun()
 
                         if rx.get('pharmacy_recommendations'):
                             data = rx['pharmacy_recommendations']
@@ -1335,7 +1333,6 @@ def page_pharmacy():
                                 rx.get('delivery_time', 'standard')
                             )
                             rx['driver_recommendation'] = rec
-                        st.rerun()
 
                 if rx.get('driver_recommendation'):
                     rec = rx['driver_recommendation']
