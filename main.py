@@ -738,11 +738,6 @@ def apply_custom_css():
     .login-logo {
         font-size: 3.5rem;
         margin-bottom: 0.5rem;
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.06); }
     }
     .login-title {
         font-size: 2.6rem;
@@ -1102,6 +1097,7 @@ def page_patient():
                                 rx['location'] = full_address
                                 rx.pop('pharmacy_recommendations', None)
                                 add_activity(f"{patient_name} set address for {rx['id']}")
+                                st.rerun()
                             else:
                                 st.error("All fields are required.")
                 else:
@@ -1152,7 +1148,7 @@ def page_patient():
                                             'recommendation': rec
                                         }
                                         st.write("✅ Analysis complete!")
-                                        status.update(label="Done!", state="complete")
+                                        status.update(label="Done! ", state="complete")
 
                         if rx.get('pharmacy_recommendations'):
                             data = rx['pharmacy_recommendations']
