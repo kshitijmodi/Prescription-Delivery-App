@@ -421,7 +421,7 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         letter-spacing: 0.03em !important;
         padding: 0.6rem 1rem !important;
-        transition: all 0.25s ease !important;
+        transition: box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease !important;
         width: 100% !important;
         box-shadow: 0 1px 6px rgba(239,68,68,0.10), inset 0 1px 0 rgba(255,255,255,0.04) !important;
         text-align: center !important;
@@ -587,7 +587,7 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         color: #64748B !important;
         padding: 0.5rem 1rem !important;
-        transition: all 0.2s ease !important;
+        transition: background 0.15s ease, color 0.15s ease !important;
     }
     .stTabs [aria-selected="true"] {
         background: white !important;
