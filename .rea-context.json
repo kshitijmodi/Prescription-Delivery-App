@@ -1,15 +1,5 @@
 [
   {
-    "role": "user",
-    "text": "https://huggingface.co/spaces/iamkshitij/prescription-delivery-app\n\nDemo credentials in the screenshot attached aren't readable. Fix that please",
-    "timestamp": "2026-04-14T00:41:32.296Z"
-  },
-  {
-    "role": "user",
-    "text": "Demo credentials aren't readable. Fix that please",
-    "timestamp": "2026-04-14T00:44:28.941Z"
-  },
-  {
     "role": "assistant",
     "text": "Task completed: Demo credentials aren't readable. Fix that please",
     "timestamp": "2026-04-14T00:47:20.684Z"
@@ -48,5 +38,15 @@
     "role": "user",
     "text": "Fix ui issues",
     "timestamp": "2026-04-15T04:28:16.734Z"
+  },
+  {
+    "role": "assistant",
+    "text": "Task completed: Fix ui issues",
+    "timestamp": "2026-04-15T04:36:25.534Z"
+  },
+  {
+    "role": "user",
+    "text": "The blinking of app upon clicking any button across such as Send Prescription, save address, find pharmacy using AI, etc is still happening. Fix that properly this time",
+    "timestamp": "2026-04-15T17:50:54.837Z"
   }
 ]
