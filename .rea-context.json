@@ -1,16 +1,6 @@
 [
   {
     "role": "user",
-    "text": "Unresolved merge conflict: The git status shows UU main.py (unmerged/conflicted state), suggesting this diff is from an incomplete merge. The CSS changes may not address the actual conflict markers in the file.",
-    "timestamp": "2026-04-15T18:39:17.346Z"
-  },
-  {
-    "role": "assistant",
-    "text": "Task completed: Unresolved merge conflict: The git status shows UU main.py (unmerged/conflicted state), suggesting this diff is from an incomplete merge. The CSS changes may not address the actual conflict markers in the file.",
-    "timestamp": "2026-04-15T18:43:59.266Z"
-  },
-  {
-    "role": "user",
     "text": "1. In pharmacy account, after clicking AI button, there is overlap between the word Done and the word Check\n2. All expandable buttons across the app have the blinking issue",
     "timestamp": "2026-04-15T20:38:03.066Z"
   },
@@ -48,5 +38,15 @@
     "role": "user",
     "text": "I want to keep the bot changes. Can you help me with the commands and how I should run it?",
     "timestamp": "2026-04-15T22:53:18.925Z"
+  },
+  {
+    "role": "assistant",
+    "text": "Task completed: I want to keep the bot changes. Can you help me with the commands and how I should run it?",
+    "timestamp": "2026-04-15T22:57:25.395Z"
+  },
+  {
+    "role": "user",
+    "text": "When i click on the PR link, it doesn't let me merge as there is a merge conflict message on that page. Refer to attached image",
+    "timestamp": "2026-04-15T23:02:55.062Z"
   }
 ]

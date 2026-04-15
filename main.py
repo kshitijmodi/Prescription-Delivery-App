@@ -263,8 +263,6 @@ def init_session_state():
         st.session_state.user_display_name = None
     if 'pharmacy_name_to_account' not in st.session_state:
         st.session_state.pharmacy_name_to_account = {}
-    if '_btn_processing' not in st.session_state:
-        st.session_state._btn_processing = {}
 
 
 def add_activity(message):
@@ -312,14 +310,20 @@ def apply_custom_css():
     <style>
 
     /* ── Global ── */
-    html, body, * {
+    html, body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background: #F8FAFC !important;
+    }
+    div, span, p, h1, h2, h3, h4, h5, h6, label, button, input, select, textarea {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
     .main .block-container {
         padding-top: 1.5rem;
         padding-bottom: 2rem;
         max-width: 1200px;
+        background: #F8FAFC;
     }
+    [data-testid="stAppViewContainer"] { background: #F8FAFC !important; }
 
     /* ── Sidebar ── */
     [data-testid="stSidebar"] {
@@ -330,7 +334,9 @@ def apply_custom_css():
     [data-testid="stSidebar"] > div:first-child {
         padding-top: 1.25rem !important;
     }
-    [data-testid="stSidebar"] * {
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span:not([data-baseweb]),
+    [data-testid="stSidebar"] label {
         color: #B8C6D9 !important;
     }
     [data-testid="stSidebar"] .stMarkdown h1,
@@ -352,6 +358,7 @@ def apply_custom_css():
         padding: 0.5rem 0.75rem !important;
         border-radius: 10px !important;
         margin-bottom: 2px !important;
+        transition: background 0.2s ease, color 0.2s ease !important;
         cursor: pointer !important;
         font-weight: 500 !important;
         font-size: 0.875rem !important;
@@ -414,6 +421,7 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         letter-spacing: 0.03em !important;
         padding: 0.6rem 1rem !important;
+        transition: box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease !important;
         width: 100% !important;
         box-shadow: 0 1px 6px rgba(239,68,68,0.10), inset 0 1px 0 rgba(255,255,255,0.04) !important;
         text-align: center !important;
@@ -426,20 +434,19 @@ def apply_custom_css():
         inset: 0 !important;
         background: linear-gradient(135deg, rgba(239,68,68,0.0) 0%, rgba(239,68,68,0.06) 100%) !important;
         opacity: 0 !important;
+        transition: opacity 0.25s ease !important;
         border-radius: inherit !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
         background: linear-gradient(135deg, rgba(239,68,68,0.18) 0%, rgba(220,38,38,0.26) 100%) !important;
         border-color: rgba(239,68,68,0.55) !important;
         color: #FECACA !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(239,68,68,0.25), 0 1px 4px rgba(239,68,68,0.15) !important;
+        box-shadow: 0 4px 16px rgba(239,68,68,0.25) !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover::before {
         opacity: 1 !important;
     }
     [data-testid="stSidebar"] .stButton > button:active {
-        transform: translateY(0px) !important;
         box-shadow: 0 1px 6px rgba(239,68,68,0.15) !important;
     }
 
@@ -454,12 +461,13 @@ def apply_custom_css():
         top: 0 !important;
     }
 
-    /* ── Buttons ── */
+    /* ── Buttons — NO transform (prevents Streamlit blink) ── */
     .stButton > button {
         border-radius: 10px !important;
         font-weight: 600 !important;
         font-size: 0.875rem !important;
         padding: 0.5rem 1.25rem !important;
+        transition: box-shadow 0.15s ease, opacity 0.15s ease !important;
         border: none !important;
         background: linear-gradient(135deg, #0EA5E9, #6366F1) !important;
         color: white !important;
@@ -467,12 +475,8 @@ def apply_custom_css():
         width: 100%;
     }
     .stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(14,165,233,0.4) !important;
-        opacity: 0.95 !important;
-    }
-    .stButton > button:active {
-        transform: translateY(0px) !important;
+        box-shadow: 0 4px 16px rgba(14,165,233,0.4) !important;
+        opacity: 0.90 !important;
     }
 
     /* ── Form submit buttons ── */
@@ -483,28 +487,13 @@ def apply_custom_css():
         color: white !important;
         border: none !important;
         padding: 0.6rem 1.5rem !important;
+        transition: box-shadow 0.15s ease, opacity 0.15s ease !important;
         box-shadow: 0 2px 10px rgba(16,185,129,0.3) !important;
         width: 100% !important;
     }
     .stFormSubmitButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(16,185,129,0.45) !important;
-    }
-
-    /* ── Inputs ── */
-    .stTextInput > div > div > input,
-    .stNumberInput > div > div > input,
-    .stSelectbox > div > div {
-        border-radius: 10px !important;
-        border: 1.5px solid #E2E8F0 !important;
-        font-family: 'Inter', sans-serif !important;
-        font-size: 0.9rem !important;
-        background: #FAFAFA !important;
-    }
-    .stTextInput > div > div > input:focus,
-    .stNumberInput > div > div > input:focus {
-        border-color: #0EA5E9 !important;
-        box-shadow: 0 0 0 3px rgba(14,165,233,0.12) !important;
+        box-shadow: 0 4px 16px rgba(16,185,129,0.4) !important;
+        opacity: 0.90 !important;
     }
 
     /* ── Inputs — target BaseUI to fix black fields ── */
@@ -566,6 +555,7 @@ def apply_custom_css():
         border-radius: 14px;
         padding: 1rem 1.25rem;
         box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        transition: box-shadow 0.2s ease;
     }
     [data-testid="stMetric"]:hover {
         box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -597,6 +587,7 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         color: #64748B !important;
         padding: 0.5rem 1rem !important;
+        transition: background 0.15s ease, color 0.15s ease !important;
     }
     .stTabs [aria-selected="true"] {
         background: white !important;
@@ -613,8 +604,11 @@ def apply_custom_css():
         overflow: hidden !important;
         background: white !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+        transition: box-shadow 0.2s ease !important;
     }
-
+    [data-testid="stExpander"]:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    }
     [data-testid="stExpander"] summary {
         font-weight: 600 !important;
         color: #1E293B !important;
@@ -629,6 +623,7 @@ def apply_custom_css():
     .stProgress > div > div > div {
         border-radius: 99px !important;
         background: linear-gradient(90deg, #0EA5E9, #6366F1) !important;
+        transition: width 0.5s ease !important;
     }
 
     /* ── Alerts ── */
@@ -636,50 +631,6 @@ def apply_custom_css():
         border-radius: 12px !important;
         border: none !important;
         font-weight: 500 !important;
-    }
-
-    /* ── st.status() overlap fix ── */
-    [data-testid="stStatusWidget"] {
-        min-width: 0 !important;
-        overflow: hidden !important;
-    }
-    [data-testid="stStatusWidget"] > div {
-        display: flex !important;
-        align-items: center !important;
-        gap: 0.5rem !important;
-        flex-wrap: nowrap !important;
-        min-width: 0 !important;
-    }
-    [data-testid="stStatusWidget"] label {
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        min-width: 0 !important;
-        flex-shrink: 1 !important;
-    }
-    [data-testid="stStatusWidget"] .stSpinner,
-    [data-testid="stStatusWidget"] svg {
-        flex-shrink: 0 !important;
-    }
-    @media (max-width: 768px) {
-        [data-testid="stStatusWidget"] label {
-            font-size: 0.85rem !important;
-            max-width: 120px !important;
-        }
-    }
-    @media (max-width: 480px) {
-        [data-testid="stStatusWidget"] label {
-            font-size: 0.78rem !important;
-            max-width: 80px !important;
-        }
-        [data-testid="stStatusWidget"] > div {
-            gap: 0.25rem !important;
-        }
-    }
-    @media (min-width: 769px) {
-        [data-testid="stStatusWidget"] label {
-            max-width: 200px !important;
-        }
     }
 
     /* ── Divider ── */
@@ -730,6 +681,7 @@ def apply_custom_css():
         padding: 1.25rem 1.5rem;
         margin-bottom: 1rem;
         box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        transition: box-shadow 0.2s ease;
     }
     .rx-card:hover {
         box-shadow: 0 6px 24px rgba(0,0,0,0.08);
@@ -1150,7 +1102,6 @@ def page_patient():
                                 rx['location'] = full_address
                                 rx.pop('pharmacy_recommendations', None)
                                 add_activity(f"{patient_name} set address for {rx['id']}")
-                                st.rerun()
                             else:
                                 st.error("All fields are required.")
                 else:
@@ -1178,9 +1129,7 @@ def page_patient():
                                 if all([street, city, state, zipcode]):
                                     rx['location'] = f"{street}, {city}, {state} {zipcode}"
                                     rx.pop('_editing_address', None)
-                                    if 'pharmacy_recommendations' in rx:
-                                        rx.pop('pharmacy_recommendations', None)
-                                    st.rerun()
+                                    rx.pop('pharmacy_recommendations', None)
                             if sc2.form_submit_button("✖ Cancel"):
                                 rx.pop('_editing_address', None)
 
@@ -1189,17 +1138,7 @@ def page_patient():
                         if not maps_key or not groq_key:
                             st.error("⚠️ API keys are not configured. An admin must add GOOGLE_MAPS_API_KEY and GROQ_API_KEY as environment secrets in the HF Space settings.")
                         else:
-                            ph_trigger_key = f"find_ph_trigger_{rx['id']}"
-                            if ph_trigger_key not in st.session_state:
-                                st.session_state[ph_trigger_key] = False
-
-                            def _trigger_find_pharmacies(k=ph_trigger_key):
-                                st.session_state[k] = True
-
-                            st.button(f"🤖 Find Nearby Pharmacies with AI", key=f"find_ph_{rx['id']}", on_click=_trigger_find_pharmacies)
-
-                            if st.session_state.get(ph_trigger_key):
-                                st.session_state[ph_trigger_key] = False
+                            if st.button(f"🤖 Find Nearby Pharmacies with AI", key=f"find_ph_{rx['id']}"):
                                 with st.status("Analyzing pharmacies...", expanded=True) as status:
                                     st.write("🔍 Searching nearby pharmacies...")
                                     maps = GoogleMapsAPI(maps_key)
@@ -1375,10 +1314,9 @@ def page_pharmacy():
                 c3.write(f"**Window:** {rx.get('delivery_time','—')}")
                 if rx.get('instructions'):
                     st.info(f"📝 {rx['instructions']}")
-                def _cb_accept_order(rx_id=rx['id']):
-                    st.session_state._btn_processing.pop(f"accept_{rx_id}", None)
-                    update_prescription_status(rx_id, 'filling')
-                st.button(f"✅ Accept Order", key=f"accept_{rx['id']}", on_click=_cb_accept_order)
+                if st.button(f"✅ Accept Order", key=f"accept_{rx['id']}"):
+                    update_prescription_status(rx['id'], 'filling')
+                    st.rerun()
 
     with tab2:
         if not filling:
@@ -1387,10 +1325,9 @@ def page_pharmacy():
             with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
                 st.progress(60, text="⚗️ Filling in progress — 60%")
                 st.markdown("<br>", unsafe_allow_html=True)
-                def _cb_mark_ready(rx_id=rx['id']):
-                    st.session_state._btn_processing.pop(f"ready_{rx_id}", None)
-                    update_prescription_status(rx_id, 'ready')
-                st.button(f"🟢 Mark as Ready", key=f"ready_{rx['id']}", on_click=_cb_mark_ready)
+                if st.button(f"🟢 Mark as Ready", key=f"ready_{rx['id']}"):
+                    update_prescription_status(rx['id'], 'ready')
+                    st.rerun()
 
     with tab3:
         if not ready:
@@ -1407,17 +1344,7 @@ def page_pharmacy():
                 </div>
                 """, unsafe_allow_html=True)
 
-                drv_trigger_key = f"find_drv_trigger_{rx['id']}"
-                if drv_trigger_key not in st.session_state:
-                    st.session_state[drv_trigger_key] = False
-
-                def _trigger_find_driver(k=drv_trigger_key):
-                    st.session_state[k] = True
-
-                st.button(f"🤖 Find Best Driver with AI", key=f"find_drv_{rx['id']}", on_click=_trigger_find_driver)
-
-                if st.session_state.get(drv_trigger_key):
-                    st.session_state[drv_trigger_key] = False
+                if st.button(f"🤖 Find Best Driver with AI", key=f"find_drv_{rx['id']}"):
                     avail = [d for d in st.session_state.drivers if d['status'] == 'available']
                     if not avail:
                         st.warning("No drivers available right now.")
@@ -1468,7 +1395,7 @@ def page_pharmacy():
                         for opt in rec.get('ranked_options', []):
                             st.write(f"**{opt.get('name','')}** — Score: {opt.get('score','N/A')} — {opt.get('summary','')}")
 
-                        def assign_driver_callback(rec_id=rec_id, rec_drv=rec_drv, ready=ready, rec=rec, pharmacy_account=pharmacy_account):
+                        if st.button(f"🚗 Assign to {rec_drv['name']}", key=f"assign_{rx['id']}"):
                             eta_val = f"~{rec.get('estimated_delivery_minutes', 30)} min"
                             for r in ready:
                                 update_prescription_status(
@@ -1482,8 +1409,7 @@ def page_pharmacy():
                                     d['status'] = 'busy'
                                     break
                             add_activity(f"Driver {rec_drv['name']} assigned to pharmacy account {pharmacy_account}")
-
-                        st.button(f"🚗 Assign to {rec_drv['name']}", key=f"assign_{rx['id']}", on_click=assign_driver_callback)
+                            st.rerun()
 
     with tab4:
         if not delivered_today:
@@ -1504,27 +1430,6 @@ def page_pharmacy():
 # =====================================================
 # DRIVER APP
 # =====================================================
-
-def _cb_milestone_gps(rx_id, milestones, dname):
-    milestones['gps_started'] = True
-    add_activity(f"{dname} started GPS for {rx_id}")
-
-def _cb_milestone_photo(rx_id, milestones, dname):
-    milestones['photo_captured'] = True
-    add_activity(f"{dname} captured photo for {rx_id}")
-
-def _cb_milestone_sig(rx_id, milestones, dname):
-    milestones['signature_obtained'] = True
-    add_activity(f"{dname} got signature for {rx_id}")
-
-def _cb_milestone_complete(rx_id, milestones, d_id, dname, d_obj):
-    update_prescription_status(rx_id, 'delivered', delivered_at=datetime.now().strftime("%Y-%m-%d %H:%M"))
-    milestones['delivered'] = True
-    still_active = [r for r in st.session_state.prescriptions
-                    if r['status'] == 'out_for_delivery' and r.get('driver_id') == d_id]
-    if not still_active and d_obj:
-        d_obj['status'] = 'available'
-    add_activity(f"{dname} completed delivery of {rx_id}")
 
 def page_driver():
     user = USERS[st.session_state.username]
@@ -1584,30 +1489,42 @@ def page_driver():
                     st.markdown("**Delivery Steps:**")
 
                     if not ms['gps_started']:
-                        st.button("📍 Start GPS", key=f"gps_{rx['id']}",
-                                  on_click=_cb_milestone_gps,
-                                  args=(rx['id'], ms, driver_name))
+                        if st.button("📍 Start GPS", key=f"gps_{rx['id']}"):
+                            ms['gps_started'] = True
+                            add_activity(f"{driver_name} started GPS for {rx['id']}")
+                            st.rerun()
                     else:
                         st.markdown('<div class="milestone-step milestone-done">✅ GPS Started</div>', unsafe_allow_html=True)
 
                     if ms['gps_started'] and not ms['photo_captured']:
-                        st.button("📸 Capture Photo", key=f"photo_{rx['id']}",
-                                  on_click=_cb_milestone_photo,
-                                  args=(rx['id'], ms, driver_name))
+                        if st.button("📸 Capture Photo", key=f"photo_{rx['id']}"):
+                            ms['photo_captured'] = True
+                            add_activity(f"{driver_name} captured photo for {rx['id']}")
+                            st.rerun()
                     elif ms['photo_captured']:
                         st.markdown('<div class="milestone-step milestone-done">✅ Photo Captured</div>', unsafe_allow_html=True)
 
                     if ms['photo_captured'] and not ms['signature_obtained']:
-                        st.button("✍️ Get Signature", key=f"sig_{rx['id']}",
-                                  on_click=_cb_milestone_sig,
-                                  args=(rx['id'], ms, driver_name))
+                        if st.button("✍️ Get Signature", key=f"sig_{rx['id']}"):
+                            ms['signature_obtained'] = True
+                            add_activity(f"{driver_name} got signature for {rx['id']}")
+                            st.rerun()
                     elif ms['signature_obtained']:
                         st.markdown('<div class="milestone-step milestone-done">✅ Signature Obtained</div>', unsafe_allow_html=True)
 
                     if ms['signature_obtained'] and not ms['delivered']:
-                        st.button("🏁 Complete Delivery", key=f"complete_{rx['id']}",
-                                  on_click=_cb_milestone_complete,
-                                  args=(rx['id'], ms, driver_id, driver_name, driver_obj))
+                        if st.button("🏁 Complete Delivery", key=f"complete_{rx['id']}"):
+                            update_prescription_status(
+                                rx['id'], 'delivered',
+                                delivered_at=datetime.now().strftime("%Y-%m-%d %H:%M")
+                            )
+                            ms['delivered'] = True
+                            still_active = [r for r in st.session_state.prescriptions
+                                            if r['status'] == 'out_for_delivery' and r.get('driver_id') == driver_id]
+                            if not still_active and driver_obj:
+                                driver_obj['status'] = 'available'
+                            add_activity(f"{driver_name} completed delivery of {rx['id']}")
+                            st.rerun()
 
     with tab2:
         if not completed:
@@ -1792,13 +1709,6 @@ def main():
         """, unsafe_allow_html=True)
 
         def sign_out():
-            # Clear all UI trigger/processing state to prevent lingering elements
-            keys_to_clear = [k for k in st.session_state if
-                             k.startswith("find_ph_trigger_") or
-                             k.startswith("find_drv_trigger_") or
-                             k == "_btn_processing"]
-            for k in keys_to_clear:
-                del st.session_state[k]
             st.session_state.logged_in = False
             st.session_state.username = None
             st.session_state.user_role = None
