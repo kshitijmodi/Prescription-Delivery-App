@@ -74,9 +74,75 @@ print('yes' if author == 'iamkshitij' or data.get('collaborator', {}).get('role'
           }
           echo "::endgroup::"
 
+          echo "::group::Inspect HF Space for cached binary or lock files"
+          HF_TREE=$(curl -sf -H "Authorization: Bearer $HF_TOKEN" \
+            "https://huggingface.co/api/spaces/iamkshitij/prescription-delivery-app/tree/main" || true)
+
+          if [ -n "$HF_TREE" ]; then
+            echo "Current files in HF Space main tree:"
+            echo "$HF_TREE" | python3 -c "
+import sys, json
+try:
+    entries = json.load(sys.stdin)
+except Exception:
+    print('  (could not parse tree response)')
+    sys.exit(0)
+
+BLOCKED_PATTERNS = [
+    '__pycache__', '.pyc', '.pyo', '.pyd',
+    '.pytest_cache', '.ipynb_checkpoints',
+    'node_modules', '.DS_Store', 'Thumbs.db',
+]
+
+blocked = []
+for entry in entries:
+    path = entry.get('path', '')
+    size = entry.get('size', 0)
+    print(f'  {path} ({size} bytes)')
+    if any(pat in path for pat in BLOCKED_PATTERNS):
+        blocked.append(path)
+
+if blocked:
+    print()
+    print('WARNING: The following cached/binary files were found in the HF Space tree:')
+    for p in blocked:
+        print(f'  BLOCKED: {p}')
+    print('These files may cause HF to reject the push.')
+    print('They will be excluded by the force-push since they are not in the local repo.')
+else:
+    print()
+    print('No cached binary or lock files detected in HF Space tree.')
+" 2>&1
+          else
+            echo "Could not retrieve HF Space tree (space may be empty or inaccessible) — proceeding with push."
+          fi
+          echo "::endgroup::"
+
           echo "::group::Push to Hugging Face"
-          git push hf main --force --verbose 2>&1
-          echo "Push completed successfully"
+          echo "Creating orphan branch to force-clear HF Space git history..."
+          git checkout --orphan hf-sync-clean
+
+          # Stage only tracked files, excluding cached/binary artifacts
+          git rm -rf --cached . > /dev/null 2>&1 || true
+          git ls-files --others --exclude-standard > /dev/null 2>&1 || true
+
+          # Add only files tracked in the original main branch, skipping binary/cache patterns
+          git checkout main -- . 2>/dev/null || true
+          git ls-files -z | xargs -0 git add --
+          # Remove any cached or binary files that should not go to HF
+          git rm --cached -r --ignore-unmatch \
+            '__pycache__' \
+            '*.pyc' '*.pyo' '*.pyd' \
+            '.pytest_cache' \
+            '.ipynb_checkpoints' \
+            'node_modules' \
+            '.DS_Store' \
+            'Thumbs.db' 2>/dev/null || true
+
+          git commit -m "chore: fresh sync to HF Space — cleared git history to remove cached binary files"
+
+          git push hf hf-sync-clean:main --force --verbose 2>&1
+          echo "Push completed successfully (orphan history)"
           echo "::endgroup::"
 
           echo "::group::Verify sync and build status"
