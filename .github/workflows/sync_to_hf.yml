@@ -3,7 +3,6 @@ name: Sync to Hugging Face Space
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
   sync-to-hub:
@@ -16,119 +15,14 @@ jobs:
           fetch-depth: 0
           lfs: true
 
+      - name: Configure git user
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
       - name: Push to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.GH_HF_PRESCRIPTIONDELIVERYAPP }}
         run: |
-          set -euo pipefail
-          echo "::group::Validate token"
-          if [ -z "${HF_TOKEN}" ]; then
-            echo "::error::HF_TOKEN secret is empty or not set"
-            exit 1
-          fi
-          echo "HF_TOKEN is set (length: ${#HF_TOKEN})"
-          echo "::endgroup::"
-
-          echo "::group::Verify HF token write access"
-          WHOAMI_RESPONSE=$(curl -sf -H "Authorization: Bearer $HF_TOKEN" https://huggingface.co/api/whoami-v2 || true)
-          if [ -z "$WHOAMI_RESPONSE" ]; then
-            echo "::error::HF token is invalid or expired — could not authenticate with Hugging Face API"
-            exit 1
-          fi
-          HF_USERNAME=$(echo "$WHOAMI_RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('name',''))" 2>/dev/null || echo "")
-          echo "Authenticated as HF user: $HF_USERNAME"
-
-          SPACE_RESPONSE=$(curl -sf -H "Authorization: Bearer $HF_TOKEN" \
-            "https://huggingface.co/api/spaces/iamkshitij/prescription-delivery-app" || true)
-          if [ -z "$SPACE_RESPONSE" ]; then
-            echo "::error::Could not access HF Space iamkshitij/prescription-delivery-app — check that the space exists and the token has at least read access"
-            exit 1
-          fi
-
-          CAN_WRITE=$(echo "$SPACE_RESPONSE" | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-# Check if token owner matches space author or is a collaborator with write access
-author = data.get('author', '')
-print('yes' if author == 'iamkshitij' or data.get('collaborator', {}).get('role') in ('write', 'admin') else 'no')
-" 2>/dev/null || echo "unknown")
-
-          if [ "$CAN_WRITE" = "no" ]; then
-            echo "::error::HF token does not have write access to iamkshitij/prescription-delivery-app. Grant the token 'write' role on the Space or use a token belonging to the space owner."
-            exit 1
-          fi
-          echo "Write access confirmed for HF Space iamkshitij/prescription-delivery-app"
-          echo "::endgroup::"
-
-          echo "::group::Configure git credentials"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git config --global credential.helper store
-          echo "https://iamkshitij:$HF_TOKEN@huggingface.co" >> ~/.git-credentials
-          echo "::endgroup::"
-
-          echo "::group::Add Hugging Face remote"
-          git remote add hf https://iamkshitij:$HF_TOKEN@huggingface.co/spaces/iamkshitij/prescription-delivery-app || {
-            echo "Remote 'hf' already exists, updating URL..."
-            git remote set-url hf https://iamkshitij:$HF_TOKEN@huggingface.co/spaces/iamkshitij/prescription-delivery-app
-          }
-          echo "::endgroup::"
-
-          echo "::group::Push to Hugging Face"
-          git push hf main --force --verbose 2>&1
-          echo "Push completed successfully"
-          echo "::endgroup::"
-
-          echo "::group::Verify sync and build status"
-          echo "Waiting 15 seconds for HF Space to register the push..."
-          sleep 15
-
-          SPACE_INFO=$(curl -sf -H "Authorization: Bearer $HF_TOKEN" \
-            "https://huggingface.co/api/spaces/iamkshitij/prescription-delivery-app" || true)
-
-          if [ -z "$SPACE_INFO" ]; then
-            echo "::warning::Could not retrieve HF Space info after push — verify manually at https://huggingface.co/spaces/iamkshitij/prescription-delivery-app"
-          else
-            BUILD_STATUS=$(echo "$SPACE_INFO" | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-runtime = data.get('runtime', {})
-stage = runtime.get('stage', 'UNKNOWN')
-print(stage)
-" 2>/dev/null || echo "UNKNOWN")
-
-            echo "HF Space build stage: $BUILD_STATUS"
-
-            case "$BUILD_STATUS" in
-              RUNNING|APP_STARTING|BUILDING)
-                echo "HF Space is building/starting — sync confirmed. Monitor at https://huggingface.co/spaces/iamkshitij/prescription-delivery-app"
-                ;;
-              RUNNING_BUILDING)
-                echo "HF Space is running and rebuilding with new files — sync confirmed."
-                ;;
-              STOPPED|PAUSED|SLEEPING)
-                echo "::warning::HF Space is $BUILD_STATUS after push. It may need to be manually restarted."
-                ;;
-              ERROR|BUILD_ERROR)
-                echo "::error::HF Space reported $BUILD_STATUS after sync. Check build logs at https://huggingface.co/spaces/iamkshitij/prescription-delivery-app"
-                exit 1
-                ;;
-              *)
-                echo "HF Space status: $BUILD_STATUS — verify manually at https://huggingface.co/spaces/iamkshitij/prescription-delivery-app"
-                ;;
-            esac
-
-            # Confirm key files are present in the Space tree
-            TREE_RESPONSE=$(curl -sf -H "Authorization: Bearer $HF_TOKEN" \
-              "https://huggingface.co/api/spaces/iamkshitij/prescription-delivery-app/tree/main" || true)
-            if [ -n "$TREE_RESPONSE" ]; then
-              FILE_COUNT=$(echo "$TREE_RESPONSE" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
-              echo "Files visible in HF Space main tree: $FILE_COUNT"
-              if [ "$FILE_COUNT" = "0" ]; then
-                echo "::warning::No files found in HF Space tree — the push may not have propagated yet."
-              fi
-            else
-              echo "::warning::Could not retrieve HF Space file tree — verify manually."
-            fi
-          fi
-          echo "::endgroup::"
+          set -e
+          git push https://oauth2:$HF_TOKEN@huggingface.co/spaces/iamkshitij/prescription-delivery-app main --force
