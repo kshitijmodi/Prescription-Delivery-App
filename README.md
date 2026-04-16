@@ -13,6 +13,8 @@ pinned: false
 
 A full-stack prescription delivery platform with AI-powered pharmacy matching, real-time driver assignment, and a multi-role login system — targeting the $600B US prescription market.
 
+[![Sync to Hugging Face Space](https://github.com/kshitijmodi/Prescription-Delivery-App/actions/workflows/sync_to_hf.yml/badge.svg)](https://github.com/kshitijmodi/Prescription-Delivery-App/actions/workflows/sync_to_hf.yml)
+
 ---
 
 ## 🔐 Demo Login Credentials
