@@ -435,7 +435,7 @@ def apply_custom_css():
         font-size: 0.875rem !important;
         letter-spacing: 0.03em !important;
         padding: 0.6rem 1rem !important;
-        transition: box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease !important;
+        transition: box-shadow 0.15s ease, background 0.15s ease !important;
         width: 100% !important;
         box-shadow: 0 1px 6px rgba(239,68,68,0.10), inset 0 1px 0 rgba(255,255,255,0.04) !important;
         text-align: center !important;
@@ -481,7 +481,7 @@ def apply_custom_css():
         font-weight: 600 !important;
         font-size: 0.875rem !important;
         padding: 0.5rem 1.25rem !important;
-        transition: box-shadow 0.15s ease, opacity 0.15s ease !important;
+        transition: box-shadow 0.15s ease !important;
         border: none !important;
         background: linear-gradient(135deg, #0EA5E9, #6366F1) !important;
         color: white !important;
@@ -490,7 +490,7 @@ def apply_custom_css():
     }
     .stButton > button:hover {
         box-shadow: 0 4px 16px rgba(14,165,233,0.4) !important;
-        opacity: 0.90 !important;
+        transition: box-shadow 0.15s ease !important;
     }
 
     /* ── Form submit buttons ── */
@@ -562,6 +562,21 @@ def apply_custom_css():
         font-size: 0.875rem !important;
     }
 
+    /* ── Password toggle icon — prevent black override ── */
+    [data-baseweb="input"] svg {
+        color: #64748B !important;
+        stroke: #64748B !important;
+    }
+    [data-baseweb="input"] button svg,
+    [data-baseweb="input"] [role="button"] svg,
+    [data-testid="stTextInput"] [data-baseweb="input"] svg,
+    .stTextInput [data-baseweb="input"] svg {
+        color: #64748B !important;
+        stroke: #64748B !important;
+        fill: none !important;
+        opacity: 0.7 !important;
+    }
+
     /* ── Metrics ── */
     [data-testid="stMetric"] {
         background: white;
@@ -619,6 +634,7 @@ def apply_custom_css():
         background: white !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
         transition: box-shadow 0.2s ease !important;
+        will-change: auto !important;
     }
     [data-testid="stExpander"]:hover {
         box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
@@ -1341,6 +1357,7 @@ def page_pharmacy():
                 if st.button(f"✅ Accept Order", key=f"accept_{rx['id']}"):
                     st.session_state[exp_key] = True
                     update_prescription_status(rx['id'], 'filling')
+                    time.sleep(0.15)
                     st.rerun()
 
     with tab2:
@@ -1354,6 +1371,7 @@ def page_pharmacy():
                 if st.button(f"🟢 Mark as Ready", key=f"ready_{rx['id']}"):
                     st.session_state[exp_key] = True
                     update_prescription_status(rx['id'], 'ready')
+                    time.sleep(0.15)
                     st.rerun()
 
     with tab3:
@@ -1438,6 +1456,7 @@ def page_pharmacy():
                                     d['status'] = 'busy'
                                     break
                             add_activity(f"Driver {rec_drv['name']} assigned to pharmacy account {pharmacy_account}")
+                            time.sleep(0.15)
                             st.rerun()
 
     with tab4:
@@ -1523,6 +1542,7 @@ def page_driver():
                             ms['gps_started'] = True
                             st.session_state[exp_key] = True
                             add_activity(f"{driver_name} started GPS for {rx['id']}")
+                            time.sleep(0.15)
                             st.rerun()
                     else:
                         st.markdown('<div class="milestone-step milestone-done">✅ GPS Started</div>', unsafe_allow_html=True)
@@ -1532,6 +1552,7 @@ def page_driver():
                             ms['photo_captured'] = True
                             st.session_state[exp_key] = True
                             add_activity(f"{driver_name} captured photo for {rx['id']}")
+                            time.sleep(0.15)
                             st.rerun()
                     elif ms['photo_captured']:
                         st.markdown('<div class="milestone-step milestone-done">✅ Photo Captured</div>', unsafe_allow_html=True)
@@ -1541,6 +1562,7 @@ def page_driver():
                             ms['signature_obtained'] = True
                             st.session_state[exp_key] = True
                             add_activity(f"{driver_name} got signature for {rx['id']}")
+                            time.sleep(0.15)
                             st.rerun()
                     elif ms['signature_obtained']:
                         st.markdown('<div class="milestone-step milestone-done">✅ Signature Obtained</div>', unsafe_allow_html=True)
@@ -1558,6 +1580,7 @@ def page_driver():
                             if not still_active and driver_obj:
                                 driver_obj['status'] = 'available'
                             add_activity(f"{driver_name} completed delivery of {rx['id']}")
+                            time.sleep(0.15)
                             st.rerun()
 
     with tab2:
