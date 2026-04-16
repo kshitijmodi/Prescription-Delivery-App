@@ -1,10 +1,5 @@
 [
   {
-    "role": "user",
-    "text": "When i click on the PR link, it doesn't let me merge as there is a merge conflict message on that page. Refer to attached image",
-    "timestamp": "2026-04-15T23:02:55.062Z"
-  },
-  {
     "role": "assistant",
     "text": "Task completed: When i click on the PR link, it doesn't let me merge as there is a merge conflict message on that page. Refer to attached image",
     "timestamp": "2026-04-15T23:19:19.323Z"
@@ -48,5 +43,10 @@
     "role": "user",
     "text": "Still didn't sync with HF",
     "timestamp": "2026-04-16T02:53:31.528Z"
+  },
+  {
+    "role": "user",
+    "text": "1. In patient account, after clicking AI button, there is overlap between the word Done and the word Check\n2. Also in patient account, the button save address needs to be clicked twice to be able to save the address\n3. All expandable buttons across the app have the blinking issue\n4. All buttons in provider patient pharmacy driver profiles are making the app blink when clicked on them\nFix these",
+    "timestamp": "2026-04-16T15:32:44.985Z"
   }
 ]
