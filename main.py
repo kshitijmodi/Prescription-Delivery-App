@@ -263,6 +263,20 @@ def init_session_state():
         st.session_state.user_display_name = None
     if 'pharmacy_name_to_account' not in st.session_state:
         st.session_state.pharmacy_name_to_account = {}
+    if 'expander_states' not in st.session_state:
+        st.session_state.expander_states = {}
+    # Initialize expander state keys for all existing prescriptions
+    for _rx in st.session_state.get('prescriptions', []):
+        _rid = _rx['id']
+        for _key in [
+            f"prov_exp_{_rid}",
+            f"ph_exp_assigned_{_rid}",
+            f"ph_exp_filling_{_rid}",
+            f"ph_exp_ready_{_rid}",
+            f"drv_exp_{_rid}",
+        ]:
+            if _key not in st.session_state:
+                st.session_state[_key] = False
 
 
 def add_activity(message):
@@ -1020,6 +1034,15 @@ def page_provider():
                 'delivered': False
             }
         })
+        # Initialize expander state keys for the new prescription
+        for _key in [
+            f"prov_exp_{rx_id}",
+            f"ph_exp_assigned_{rx_id}",
+            f"ph_exp_filling_{rx_id}",
+            f"ph_exp_ready_{rx_id}",
+            f"drv_exp_{rx_id}",
+        ]:
+            st.session_state[_key] = False
         add_activity(f"Provider created {rx_id} for {patient_name} – {medication}")
         st.success(f"✅ Prescription **{rx_id}** sent to **{patient_name}**")
 
@@ -1036,7 +1059,10 @@ def page_provider():
     if not st.session_state.prescriptions:
         st.info("No prescriptions created yet. Use the form above to get started.")
     for rx in reversed(st.session_state.prescriptions[-10:]):
-        with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+        exp_key = f"prov_exp_{rx['id']}"
+        if exp_key not in st.session_state:
+            st.session_state[exp_key] = False
+        with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}", expanded=st.session_state.get(exp_key, False)):
             st.markdown(status_pill(rx['status']), unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
             c1, c2, c3 = st.columns(3)
@@ -1126,6 +1152,7 @@ def page_patient():
                                     rx['location'] = f"{street}, {city}, {state} {zipcode}"
                                     rx.pop('_editing_address', None)
                                     rx.pop('pharmacy_recommendations', None)
+                                    st.rerun()
                             if sc2.form_submit_button("✖ Cancel"):
                                 rx.pop('_editing_address', None)
 
@@ -1148,7 +1175,7 @@ def page_patient():
                                             'recommendation': rec
                                         }
                                         st.write("✅ Analysis complete!")
-                                        status.update(label="Done! ", state="complete")
+                                        status.update(label="", state="complete")
 
                         if rx.get('pharmacy_recommendations'):
                             data = rx['pharmacy_recommendations']
@@ -1301,7 +1328,8 @@ def page_pharmacy():
         if not assigned:
             st.info("No new orders at this time.")
         for rx in assigned:
-            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+            exp_key = f"ph_exp_assigned_{rx['id']}"
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}", expanded=st.session_state.get(exp_key, False)):
                 st.markdown(status_pill(rx['status']), unsafe_allow_html=True)
                 st.markdown("<br>", unsafe_allow_html=True)
                 c1, c2, c3 = st.columns(3)
@@ -1311,6 +1339,7 @@ def page_pharmacy():
                 if rx.get('instructions'):
                     st.info(f"📝 {rx['instructions']}")
                 if st.button(f"✅ Accept Order", key=f"accept_{rx['id']}"):
+                    st.session_state[exp_key] = True
                     update_prescription_status(rx['id'], 'filling')
                     st.rerun()
 
@@ -1318,10 +1347,12 @@ def page_pharmacy():
         if not filling:
             st.info("No prescriptions currently being filled.")
         for rx in filling:
-            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+            exp_key = f"ph_exp_filling_{rx['id']}"
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}", expanded=st.session_state.get(exp_key, False)):
                 st.progress(60, text="⚗️ Filling in progress — 60%")
                 st.markdown("<br>", unsafe_allow_html=True)
                 if st.button(f"🟢 Mark as Ready", key=f"ready_{rx['id']}"):
+                    st.session_state[exp_key] = True
                     update_prescription_status(rx['id'], 'ready')
                     st.rerun()
 
@@ -1333,7 +1364,8 @@ def page_pharmacy():
         maps_key = st.session_state.google_maps_api_key
 
         for rx in ready:
-            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+            exp_key = f"ph_exp_ready_{rx['id']}"
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}", expanded=st.session_state.get(exp_key, False)):
                 st.markdown(f"""
                 <div style="background:#F0F9FF; border-radius:10px; padding:10px 14px; font-size:0.9rem; color:#0369A1; margin-bottom:10px;">
                     📍 <strong>Patient:</strong> {rx.get('location','—')}
@@ -1393,6 +1425,7 @@ def page_pharmacy():
 
                         if st.button(f"🚗 Assign to {rec_drv['name']}", key=f"assign_{rx['id']}"):
                             eta_val = f"~{rec.get('estimated_delivery_minutes', 30)} min"
+                            st.session_state[exp_key] = True
                             for r in ready:
                                 update_prescription_status(
                                     r['id'], 'out_for_delivery',
@@ -1465,7 +1498,8 @@ def page_driver():
             </div>
             """, unsafe_allow_html=True)
         for rx in active:
-            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}"):
+            exp_key = f"drv_exp_{rx['id']}"
+            with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}", expanded=st.session_state.get(exp_key, False)):
                 col_info, col_steps = st.columns([1.2, 1])
 
                 with col_info:
@@ -1487,6 +1521,7 @@ def page_driver():
                     if not ms['gps_started']:
                         if st.button("📍 Start GPS", key=f"gps_{rx['id']}"):
                             ms['gps_started'] = True
+                            st.session_state[exp_key] = True
                             add_activity(f"{driver_name} started GPS for {rx['id']}")
                             st.rerun()
                     else:
@@ -1495,6 +1530,7 @@ def page_driver():
                     if ms['gps_started'] and not ms['photo_captured']:
                         if st.button("📸 Capture Photo", key=f"photo_{rx['id']}"):
                             ms['photo_captured'] = True
+                            st.session_state[exp_key] = True
                             add_activity(f"{driver_name} captured photo for {rx['id']}")
                             st.rerun()
                     elif ms['photo_captured']:
@@ -1503,6 +1539,7 @@ def page_driver():
                     if ms['photo_captured'] and not ms['signature_obtained']:
                         if st.button("✍️ Get Signature", key=f"sig_{rx['id']}"):
                             ms['signature_obtained'] = True
+                            st.session_state[exp_key] = True
                             add_activity(f"{driver_name} got signature for {rx['id']}")
                             st.rerun()
                     elif ms['signature_obtained']:
@@ -1510,6 +1547,7 @@ def page_driver():
 
                     if ms['signature_obtained'] and not ms['delivered']:
                         if st.button("🏁 Complete Delivery", key=f"complete_{rx['id']}"):
+                            st.session_state[exp_key] = True
                             update_prescription_status(
                                 rx['id'], 'delivered',
                                 delivered_at=datetime.now().strftime("%Y-%m-%d %H:%M")
