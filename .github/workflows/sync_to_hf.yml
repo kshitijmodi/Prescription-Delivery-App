@@ -3,6 +3,7 @@ name: Sync to Hugging Face Space
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   sync-to-hub:
@@ -19,5 +20,30 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.GH_HF_PRESCRIPTIONDELIVERYAPP }}
         run: |
-          git remote add hf https://iamkshitij:$HF_TOKEN@huggingface.co/spaces/iamkshitij/prescription-delivery-app
-          git push hf main --force
+          set -euo pipefail
+          echo "::group::Validate token"
+          if [ -z "${HF_TOKEN}" ]; then
+            echo "::error::HF_TOKEN secret is empty or not set"
+            exit 1
+          fi
+          echo "HF_TOKEN is set (length: ${#HF_TOKEN})"
+          echo "::endgroup::"
+
+          echo "::group::Configure git credentials"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global credential.helper store
+          echo "https://iamkshitij:$HF_TOKEN@huggingface.co" >> ~/.git-credentials
+          echo "::endgroup::"
+
+          echo "::group::Add Hugging Face remote"
+          git remote add hf https://iamkshitij:$HF_TOKEN@huggingface.co/spaces/iamkshitij/prescription-delivery-app || {
+            echo "Remote 'hf' already exists, updating URL..."
+            git remote set-url hf https://iamkshitij:$HF_TOKEN@huggingface.co/spaces/iamkshitij/prescription-delivery-app
+          }
+          echo "::endgroup::"
+
+          echo "::group::Push to Hugging Face"
+          git push hf main --force --verbose 2>&1
+          echo "Push completed successfully"
+          echo "::endgroup::"
