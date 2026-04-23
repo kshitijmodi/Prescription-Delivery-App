@@ -312,7 +312,7 @@ def get_pharmacy_account(pharmacy_name):
 
 ROLE_COLORS = {
     "provider": {"primary": "#6366F1", "light": "#EEF2FF", "gradient": "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)"},
-    "patient":  {"primary": "#0EA5E9", "light": "#F0F9FF", "gradient": "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)"},
+    "patient":  {"primary": "#EF4444", "light": "#FEF2F2", "gradient": "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)"},
     "pharmacy": {"primary": "#10B981", "light": "#ECFDF5", "gradient": "linear-gradient(135deg, #10B981 0%, #34D399 100%)"},
     "driver":   {"primary": "#F59E0B", "light": "#FFFBEB", "gradient": "linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)"},
     "admin":    {"primary": "#EF4444", "light": "#FEF2F2", "gradient": "linear-gradient(135deg, #EF4444 0%, #F87171 100%)"},
@@ -912,8 +912,8 @@ def login_page():
             <rect width="72" height="72" rx="20" fill="url(#loginGrad)"/>
             <defs>
                 <linearGradient id="loginGrad" x1="0" y1="0" x2="72" y2="72" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stop-color="#0EA5E9"/>
-                    <stop offset="100%" stop-color="#6366F1"/>
+                    <stop offset="0%" stop-color="#EF4444"/>
+                    <stop offset="100%" stop-color="#DC2626"/>
                 </linearGradient>
             </defs>
             <rect x="32" y="14" width="8" height="44" rx="4" fill="white"/>
@@ -1695,8 +1695,8 @@ def main():
                     <rect width="48" height="48" rx="14" fill="url(#sidebarGrad)"/>
                     <defs>
                         <linearGradient id="sidebarGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#0EA5E9"/>
-                            <stop offset="100%" stop-color="#6366F1"/>
+                            <stop offset="0%" stop-color="#EF4444"/>
+                            <stop offset="100%" stop-color="#DC2626"/>
                         </linearGradient>
                     </defs>
                     <rect x="22" y="10" width="4" height="28" rx="2" fill="white"/>
