@@ -850,7 +850,7 @@ def apply_custom_css():
         font-size: 1.3rem;
         font-weight: 800;
         letter-spacing: -0.02em;
-        background: linear-gradient(135deg, #93C5FD 0%, #818CF8 55%, #A78BFA 100%);
+        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
