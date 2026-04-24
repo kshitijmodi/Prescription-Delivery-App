@@ -1,30 +1,5 @@
 [
   {
-    "role": "assistant",
-    "text": "Task completed: 1. In patient account, after clicking AI button, there is overlap between the word Done and the word Check\n2. Also in patient account, the button save address needs to be clicked twice to be able to save the address\n3. All expandable buttons across the app have the blinking issue\n4. All buttons in provider patient pharmacy driver profiles are making the app blink when clicked on them\nFix these",
-    "timestamp": "2026-04-16T15:42:13.763Z"
-  },
-  {
-    "role": "user",
-    "text": "All the buttons in provider patient pharmacy driver portals are making the app blink when clicked. Also as seen in attached screenshot, there are show passwords icons turned black.\nFix all these issues",
-    "timestamp": "2026-04-16T23:19:32.535Z"
-  },
-  {
-    "role": "assistant",
-    "text": "Task completed: All the buttons in provider patient pharmacy driver portals are making the app blink when clicked. Also as seen in attached screenshot, there are show passwords icons turned black.\nFix all these issues",
-    "timestamp": "2026-04-16T23:29:55.525Z"
-  },
-  {
-    "role": "user",
-    "text": "Can we change the color of logo to Red?",
-    "timestamp": "2026-04-23T15:18:58.676Z"
-  },
-  {
-    "role": "user",
-    "text": "Can we change the color of logo to Red?",
-    "timestamp": "2026-04-23T16:30:28.191Z"
-  },
-  {
     "role": "user",
     "text": "Can we change the color of logo to Red?",
     "timestamp": "2026-04-23T18:23:42.450Z"
@@ -48,5 +23,30 @@
     "role": "user",
     "text": "Change the color for name of the app RxPrescribe also to the same red color as the logo",
     "timestamp": "2026-04-24T16:58:54.377Z"
+  },
+  {
+    "role": "assistant",
+    "text": "Task completed: Change the color for name of the app RxPrescribe also to the same red color as the logo",
+    "timestamp": "2026-04-24T17:01:07.424Z"
+  },
+  {
+    "role": "user",
+    "text": "[media attachment]",
+    "timestamp": "2026-04-24T17:11:47.070Z"
+  },
+  {
+    "role": "user",
+    "text": "[media attachment]",
+    "timestamp": "2026-04-24T17:12:58.679Z"
+  },
+  {
+    "role": "user",
+    "text": "In the screenshot i shared, I am showing you that your change didn't reflect on home page but only inside the portal after logging in",
+    "timestamp": "2026-04-24T17:14:12.504Z"
+  },
+  {
+    "role": "user",
+    "text": "In the screenshot i shared, I am showing you that your change didn't reflect on home page but only inside the portal after logging in",
+    "timestamp": "2026-04-24T17:20:27.992Z"
   }
 ]
