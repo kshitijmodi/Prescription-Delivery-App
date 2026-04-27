@@ -1,20 +1,5 @@
 [
   {
-    "role": "user",
-    "text": "Can we change the color of logo to Red?",
-    "timestamp": "2026-04-23T18:23:42.450Z"
-  },
-  {
-    "role": "assistant",
-    "text": "Task completed: Can we change the color of logo to Red?",
-    "timestamp": "2026-04-23T18:31:22.311Z"
-  },
-  {
-    "role": "user",
-    "text": "The color of logo is still blue. Check attached image",
-    "timestamp": "2026-04-23T19:32:01.659Z"
-  },
-  {
     "role": "assistant",
     "text": "Task completed: The color of logo is still blue. Check attached image",
     "timestamp": "2026-04-23T19:36:02.330Z"
@@ -48,5 +33,20 @@
     "role": "user",
     "text": "In the screenshot i shared, I am showing you that your change didn't reflect on home page but only inside the portal after logging in",
     "timestamp": "2026-04-24T17:20:27.992Z"
+  },
+  {
+    "role": "assistant",
+    "text": "Task completed: In the screenshot i shared, I am showing you that your change didn't reflect on home page but only inside the portal after logging in",
+    "timestamp": "2026-04-24T17:25:38.287Z"
+  },
+  {
+    "role": "user",
+    "text": "https://huggingface.co/spaces/iamkshitij/prescription-delivery-app\n\nFix the blackened buttons for quantity refills fields in provider Portal",
+    "timestamp": "2026-04-25T17:15:10.115Z"
+  },
+  {
+    "role": "user",
+    "text": "https://huggingface.co/spaces/iamkshitij/prescription-delivery-app\n\nFix the blackened buttons for quantity refills fields in provider Portal",
+    "timestamp": "2026-04-27T14:18:13.335Z"
   }
 ]

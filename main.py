@@ -555,6 +555,54 @@ def apply_custom_css():
         background: white !important;
         color: #0F172A !important;
     }
+    /* ── Number input spinner buttons — prevent black override ── */
+    [data-testid="stNumberInput"] [data-baseweb="input"] button,
+    [data-testid="stNumberInput"] button {
+        background: #F1F5F9 !important;
+        color: #334155 !important;
+        border: none !important;
+        border-left: 1.5px solid #CBD5E1 !important;
+        box-shadow: none !important;
+        transition: background 0.15s ease, color 0.15s ease !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"] button:hover,
+    [data-testid="stNumberInput"] button:hover {
+        background: #E2E8F0 !important;
+        color: #0F172A !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"] button:hover svg,
+    [data-testid="stNumberInput"] button:hover svg {
+        color: #0F172A !important;
+        stroke: #0F172A !important;
+        fill: #0F172A !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"] button:active,
+    [data-testid="stNumberInput"] button:active {
+        background: #CBD5E1 !important;
+        color: #0F172A !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"] button:active svg,
+    [data-testid="stNumberInput"] button:active svg {
+        color: #0F172A !important;
+        stroke: #0F172A !important;
+        fill: #0F172A !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"] button svg,
+    [data-testid="stNumberInput"] button svg {
+        color: #334155 !important;
+        stroke: #334155 !important;
+        fill: #334155 !important;
+        opacity: 1 !important;
+        transition: color 0.15s ease, fill 0.15s ease, stroke 0.15s ease !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"] button svg path,
+    [data-testid="stNumberInput"] button svg path {
+        fill: #334155 !important;
+        stroke: #334155 !important;
+        opacity: 1 !important;
+    }
     .stTextInput label, .stSelectbox label,
     .stNumberInput label, .stTextArea label {
         color: #374151 !important;
@@ -575,6 +623,43 @@ def apply_custom_css():
         stroke: #64748B !important;
         fill: none !important;
         opacity: 0.7 !important;
+    }
+
+    /* ── Number input spinner buttons — light color (overrides generic fill:none above) ── */
+    [data-baseweb="input"] button {
+        background: #F1F5F9 !important;
+        color: #475569 !important;
+        border: none !important;
+        border-left: 1.5px solid #E2E8F0 !important;
+        transition: background 0.15s ease, color 0.15s ease !important;
+    }
+    [data-baseweb="input"] button:hover {
+        background: #E2E8F0 !important;
+        color: #0F172A !important;
+    }
+    [data-baseweb="input"] button:hover svg {
+        color: #0F172A !important;
+        stroke: #0F172A !important;
+        fill: #0F172A !important;
+        opacity: 1 !important;
+    }
+    [data-baseweb="input"] button:active {
+        background: #CBD5E1 !important;
+        color: #0F172A !important;
+    }
+    [data-baseweb="input"] button:active svg {
+        color: #0F172A !important;
+        stroke: #0F172A !important;
+        fill: #0F172A !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stNumberInput"] button svg,
+    [data-testid="stNumberInput"] [data-baseweb="input"] button svg {
+        color: #475569 !important;
+        stroke: #475569 !important;
+        fill: #475569 !important;
+        opacity: 1 !important;
+        transition: color 0.15s ease, fill 0.15s ease, stroke 0.15s ease !important;
     }
 
     /* ── Metrics ── */
