@@ -307,6 +307,126 @@ def get_pharmacy_account(pharmacy_name):
 
 
 # =====================================================
+# BUTTON CALLBACK FUNCTIONS
+# =====================================================
+
+def cb_login():
+    """Callback for login — reads credentials stored in session state."""
+    username = st.session_state.get("_login_username", "")
+    password = st.session_state.get("_login_password", "")
+    user = USERS.get(username)
+    if user and user["password"] == password:
+        st.session_state.logged_in = True
+        st.session_state.username = username
+        st.session_state.user_role = user["role"]
+        st.session_state.user_display_name = user["name"]
+        st.session_state._login_failed = False
+    else:
+        st.session_state._login_failed = True
+
+
+def cb_save_address(rx_id, street, city, state, zipcode, patient_name):
+    """Callback for saving a new delivery address on a prescription."""
+    for rx in st.session_state.prescriptions:
+        if rx['id'] == rx_id:
+            rx['location'] = f"{street}, {city}, {state} {zipcode}"
+            rx.pop('pharmacy_recommendations', None)
+            add_activity(f"{patient_name} set address for {rx_id}")
+            break
+
+
+def cb_update_address(rx_id, street, city, state, zipcode):
+    """Callback for updating an existing delivery address."""
+    for rx in st.session_state.prescriptions:
+        if rx['id'] == rx_id:
+            rx['location'] = f"{street}, {city}, {state} {zipcode}"
+            rx.pop('_editing_address', None)
+            rx.pop('pharmacy_recommendations', None)
+            break
+
+
+def cb_accept_order(rx_id, exp_key):
+    """Callback for a pharmacy accepting (filling) an order."""
+    st.session_state[exp_key] = True
+    update_prescription_status(rx_id, 'filling')
+
+
+def cb_mark_ready(rx_id, exp_key):
+    """Callback for marking a prescription as ready for pickup."""
+    st.session_state[exp_key] = True
+    update_prescription_status(rx_id, 'ready')
+
+
+def cb_assign_driver(ready_rx_ids, rec_id, rec_drv_name, pharmacy_account, exp_key, eta_val):
+    """Callback for assigning a driver to all ready prescriptions in a batch."""
+    st.session_state[exp_key] = True
+    for rx in st.session_state.prescriptions:
+        if rx['id'] in ready_rx_ids:
+            update_prescription_status(
+                rx['id'], 'out_for_delivery',
+                driver_id=rec_id,
+                driver_name=rec_drv_name,
+                estimated_delivery_time=eta_val
+            )
+    for d in st.session_state.drivers:
+        if d['id'] == rec_id:
+            d['status'] = 'busy'
+            break
+    add_activity(f"Driver {rec_drv_name} assigned to pharmacy account {pharmacy_account}")
+
+
+def cb_gps_start(rx_id, exp_key, driver_name):
+    """Callback for starting GPS tracking on an active delivery."""
+    for rx in st.session_state.prescriptions:
+        if rx['id'] == rx_id:
+            rx['milestones']['gps_started'] = True
+            break
+    st.session_state[exp_key] = True
+    add_activity(f"{driver_name} started GPS for {rx_id}")
+
+
+def cb_capture_photo(rx_id, exp_key, driver_name):
+    """Callback for capturing a delivery confirmation photo."""
+    for rx in st.session_state.prescriptions:
+        if rx['id'] == rx_id:
+            rx['milestones']['photo_captured'] = True
+            break
+    st.session_state[exp_key] = True
+    add_activity(f"{driver_name} captured photo for {rx_id}")
+
+
+def cb_get_signature(rx_id, exp_key, driver_name):
+    """Callback for recording a recipient signature."""
+    for rx in st.session_state.prescriptions:
+        if rx['id'] == rx_id:
+            rx['milestones']['signature_obtained'] = True
+            break
+    st.session_state[exp_key] = True
+    add_activity(f"{driver_name} got signature for {rx_id}")
+
+
+def cb_complete_delivery(rx_id, exp_key, driver_id, driver_name):
+    """Callback for completing a delivery and freeing up the driver."""
+    st.session_state[exp_key] = True
+    update_prescription_status(
+        rx_id, 'delivered',
+        delivered_at=datetime.now().strftime("%Y-%m-%d %H:%M")
+    )
+    for rx in st.session_state.prescriptions:
+        if rx['id'] == rx_id:
+            rx['milestones']['delivered'] = True
+            break
+    still_active = [r for r in st.session_state.prescriptions
+                    if r['status'] == 'out_for_delivery' and r.get('driver_id') == driver_id]
+    if not still_active:
+        for d in st.session_state.drivers:
+            if d['id'] == driver_id:
+                d['status'] = 'available'
+                break
+    add_activity(f"{driver_name} completed delivery of {rx_id}")
+
+
+# =====================================================
 # DESIGN SYSTEM
 # =====================================================
 
@@ -1015,20 +1135,12 @@ def login_page():
     with col2:
         with st.form("login_form"):
             st.markdown("#### Sign in to your account")
-            username = st.text_input("Username", placeholder="Enter your username")
-            password = st.text_input("Password", type="password", placeholder="Enter your password")
-            submitted = st.form_submit_button("Sign In →", use_container_width=True)
+            st.text_input("Username", placeholder="Enter your username", key="_login_username")
+            st.text_input("Password", type="password", placeholder="Enter your password", key="_login_password")
+            st.form_submit_button("Sign In →", use_container_width=True, on_click=cb_login)
 
-        if submitted:
-            user = USERS.get(username)
-            if user and user["password"] == password:
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.session_state.user_role = user["role"]
-                st.session_state.user_display_name = user["name"]
-                st.rerun()
-            else:
-                st.error("Invalid username or password.")
+        if st.session_state.get("_login_failed", False):
+            st.error("Invalid username or password.")
 
         st.markdown("<br>", unsafe_allow_html=True)
         with st.expander("🔑 View Demo Credentials"):
@@ -1225,7 +1337,7 @@ def page_patient():
                                 rx['location'] = full_address
                                 rx.pop('pharmacy_recommendations', None)
                                 add_activity(f"{patient_name} set address for {rx['id']}")
-                                st.rerun()
+                                st.session_state[f"addr_saved_{rx['id']}"] = True
                             else:
                                 st.error("All fields are required.")
                 else:
@@ -1254,7 +1366,7 @@ def page_patient():
                                     rx['location'] = f"{street}, {city}, {state} {zipcode}"
                                     rx.pop('_editing_address', None)
                                     rx.pop('pharmacy_recommendations', None)
-                                    st.rerun()
+                                    st.session_state[f"addr_updated_{rx['id']}"] = True
                             if sc2.form_submit_button("✖ Cancel"):
                                 rx.pop('_editing_address', None)
 
@@ -1440,11 +1552,7 @@ def page_pharmacy():
                 c3.write(f"**Window:** {rx.get('delivery_time','—')}")
                 if rx.get('instructions'):
                     st.info(f"📝 {rx['instructions']}")
-                if st.button(f"✅ Accept Order", key=f"accept_{rx['id']}"):
-                    st.session_state[exp_key] = True
-                    update_prescription_status(rx['id'], 'filling')
-                    time.sleep(0.15)
-                    st.rerun()
+                st.button(f"✅ Accept Order", key=f"accept_{rx['id']}", on_click=cb_accept_order, args=(rx['id'], exp_key))
 
     with tab2:
         if not filling:
@@ -1454,11 +1562,7 @@ def page_pharmacy():
             with st.expander(f"{rx['id']}  ·  {rx['patient_name']}  ·  {rx['medication']}", expanded=st.session_state.get(exp_key, False)):
                 st.progress(60, text="⚗️ Filling in progress — 60%")
                 st.markdown("<br>", unsafe_allow_html=True)
-                if st.button(f"🟢 Mark as Ready", key=f"ready_{rx['id']}"):
-                    st.session_state[exp_key] = True
-                    update_prescription_status(rx['id'], 'ready')
-                    time.sleep(0.15)
-                    st.rerun()
+                st.button(f"🟢 Mark as Ready", key=f"ready_{rx['id']}", on_click=cb_mark_ready, args=(rx['id'], exp_key))
 
     with tab3:
         if not ready:
@@ -1527,23 +1631,14 @@ def page_pharmacy():
                         for opt in rec.get('ranked_options', []):
                             st.write(f"**{opt.get('name','')}** — Score: {opt.get('score','N/A')} — {opt.get('summary','')}")
 
-                        if st.button(f"🚗 Assign to {rec_drv['name']}", key=f"assign_{rx['id']}"):
-                            eta_val = f"~{rec.get('estimated_delivery_minutes', 30)} min"
-                            st.session_state[exp_key] = True
-                            for r in ready:
-                                update_prescription_status(
-                                    r['id'], 'out_for_delivery',
-                                    driver_id=rec_id,
-                                    driver_name=rec_drv['name'],
-                                    estimated_delivery_time=eta_val
-                                )
-                            for d in st.session_state.drivers:
-                                if d['id'] == rec_id:
-                                    d['status'] = 'busy'
-                                    break
-                            add_activity(f"Driver {rec_drv['name']} assigned to pharmacy account {pharmacy_account}")
-                            time.sleep(0.15)
-                            st.rerun()
+                        ready_rx_ids = [r['id'] for r in ready]
+                        eta_val = f"~{rec.get('estimated_delivery_minutes', 30)} min"
+                        st.button(
+                            f"🚗 Assign to {rec_drv['name']}",
+                            key=f"assign_{rx['id']}",
+                            on_click=cb_assign_driver,
+                            args=(ready_rx_ids, rec_id, rec_drv['name'], pharmacy_account, exp_key, eta_val)
+                        )
 
     with tab4:
         if not delivered_today:
@@ -1624,50 +1719,22 @@ def page_driver():
                     st.markdown("**Delivery Steps:**")
 
                     if not ms['gps_started']:
-                        if st.button("📍 Start GPS", key=f"gps_{rx['id']}"):
-                            ms['gps_started'] = True
-                            st.session_state[exp_key] = True
-                            add_activity(f"{driver_name} started GPS for {rx['id']}")
-                            time.sleep(0.15)
-                            st.rerun()
+                        st.button("📍 Start GPS", key=f"gps_{rx['id']}", on_click=cb_gps_start, args=(rx['id'], exp_key, driver_name))
                     else:
                         st.markdown('<div class="milestone-step milestone-done">✅ GPS Started</div>', unsafe_allow_html=True)
 
                     if ms['gps_started'] and not ms['photo_captured']:
-                        if st.button("📸 Capture Photo", key=f"photo_{rx['id']}"):
-                            ms['photo_captured'] = True
-                            st.session_state[exp_key] = True
-                            add_activity(f"{driver_name} captured photo for {rx['id']}")
-                            time.sleep(0.15)
-                            st.rerun()
+                        st.button("📸 Capture Photo", key=f"photo_{rx['id']}", on_click=cb_capture_photo, args=(rx['id'], exp_key, driver_name))
                     elif ms['photo_captured']:
                         st.markdown('<div class="milestone-step milestone-done">✅ Photo Captured</div>', unsafe_allow_html=True)
 
                     if ms['photo_captured'] and not ms['signature_obtained']:
-                        if st.button("✍️ Get Signature", key=f"sig_{rx['id']}"):
-                            ms['signature_obtained'] = True
-                            st.session_state[exp_key] = True
-                            add_activity(f"{driver_name} got signature for {rx['id']}")
-                            time.sleep(0.15)
-                            st.rerun()
+                        st.button("✍️ Get Signature", key=f"sig_{rx['id']}", on_click=cb_get_signature, args=(rx['id'], exp_key, driver_name))
                     elif ms['signature_obtained']:
                         st.markdown('<div class="milestone-step milestone-done">✅ Signature Obtained</div>', unsafe_allow_html=True)
 
                     if ms['signature_obtained'] and not ms['delivered']:
-                        if st.button("🏁 Complete Delivery", key=f"complete_{rx['id']}"):
-                            st.session_state[exp_key] = True
-                            update_prescription_status(
-                                rx['id'], 'delivered',
-                                delivered_at=datetime.now().strftime("%Y-%m-%d %H:%M")
-                            )
-                            ms['delivered'] = True
-                            still_active = [r for r in st.session_state.prescriptions
-                                            if r['status'] == 'out_for_delivery' and r.get('driver_id') == driver_id]
-                            if not still_active and driver_obj:
-                                driver_obj['status'] = 'available'
-                            add_activity(f"{driver_name} completed delivery of {rx['id']}")
-                            time.sleep(0.15)
-                            st.rerun()
+                        st.button("🏁 Complete Delivery", key=f"complete_{rx['id']}", on_click=cb_complete_delivery, args=(rx['id'], exp_key, driver_id, driver_name))
 
     with tab2:
         if not completed:
