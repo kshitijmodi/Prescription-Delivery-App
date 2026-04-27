@@ -1,35 +1,5 @@
 [
   {
-    "role": "assistant",
-    "text": "Task completed: The color of logo is still blue. Check attached image",
-    "timestamp": "2026-04-23T19:36:02.330Z"
-  },
-  {
-    "role": "user",
-    "text": "Change the color for name of the app RxPrescribe also to the same red color as the logo",
-    "timestamp": "2026-04-24T16:58:54.377Z"
-  },
-  {
-    "role": "assistant",
-    "text": "Task completed: Change the color for name of the app RxPrescribe also to the same red color as the logo",
-    "timestamp": "2026-04-24T17:01:07.424Z"
-  },
-  {
-    "role": "user",
-    "text": "[media attachment]",
-    "timestamp": "2026-04-24T17:11:47.070Z"
-  },
-  {
-    "role": "user",
-    "text": "[media attachment]",
-    "timestamp": "2026-04-24T17:12:58.679Z"
-  },
-  {
-    "role": "user",
-    "text": "In the screenshot i shared, I am showing you that your change didn't reflect on home page but only inside the portal after logging in",
-    "timestamp": "2026-04-24T17:14:12.504Z"
-  },
-  {
     "role": "user",
     "text": "In the screenshot i shared, I am showing you that your change didn't reflect on home page but only inside the portal after logging in",
     "timestamp": "2026-04-24T17:20:27.992Z"
@@ -48,5 +18,35 @@
     "role": "user",
     "text": "https://huggingface.co/spaces/iamkshitij/prescription-delivery-app\n\nFix the blackened buttons for quantity refills fields in provider Portal",
     "timestamp": "2026-04-27T14:18:13.335Z"
+  },
+  {
+    "role": "assistant",
+    "text": "Task completed: https://huggingface.co/spaces/iamkshitij/prescription-delivery-app\n\nFix the blackened buttons for quantity refills fields in provider Portal",
+    "timestamp": "2026-04-27T14:24:32.260Z"
+  },
+  {
+    "role": "user",
+    "text": "Can we fix the issue for flickering upon clicking any button across the app?",
+    "timestamp": "2026-04-27T16:49:52.423Z"
+  },
+  {
+    "role": "user",
+    "text": "Can we fix the issue for flickering upon clicking any button across the app?",
+    "timestamp": "2026-04-27T16:53:18.991Z"
+  },
+  {
+    "role": "user",
+    "text": "The slash commands are showing twice at the end of the planning message. Fix tha",
+    "timestamp": "2026-04-27T16:54:41.077Z"
+  },
+  {
+    "role": "user",
+    "text": "The slash commands are showing twice at the end of the planning message. Fix tha",
+    "timestamp": "2026-04-27T17:03:42.493Z"
+  },
+  {
+    "role": "user",
+    "text": "Can we fix the issue for flickering upon clicking any button across the app?",
+    "timestamp": "2026-04-27T17:30:18.409Z"
   }
 ]
