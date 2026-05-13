@@ -978,11 +978,11 @@ def apply_custom_css():
         font-size: 2.6rem;
         font-weight: 900;
         letter-spacing: -0.03em;
-        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%) !important;
+        background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         background-clip: text !important;
-        color: #EF4444 !important;
+        color: #3B82F6 !important;
         margin: 0;
         line-height: 1.1;
     }
@@ -1056,7 +1056,7 @@ def apply_custom_css():
         font-size: 1.3rem;
         font-weight: 800;
         letter-spacing: -0.02em;
-        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -1118,8 +1118,8 @@ def login_page():
             <rect width="72" height="72" rx="20" fill="url(#loginGrad)"/>
             <defs>
                 <linearGradient id="loginGrad" x1="0" y1="0" x2="72" y2="72" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stop-color="#EF4444"/>
-                    <stop offset="100%" stop-color="#DC2626"/>
+                    <stop offset="0%" stop-color="#3B82F6"/>
+                    <stop offset="100%" stop-color="#2563EB"/>
                 </linearGradient>
             </defs>
             <rect x="32" y="14" width="8" height="44" rx="4" fill="white"/>
@@ -1848,8 +1848,8 @@ def main():
                     <rect width="48" height="48" rx="14" fill="url(#sidebarGrad)"/>
                     <defs>
                         <linearGradient id="sidebarGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#EF4444"/>
-                            <stop offset="100%" stop-color="#DC2626"/>
+                            <stop offset="0%" stop-color="#3B82F6"/>
+                            <stop offset="100%" stop-color="#2563EB"/>
                         </linearGradient>
                     </defs>
                     <rect x="22" y="10" width="4" height="28" rx="2" fill="white"/>
